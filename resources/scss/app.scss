@@ -1,0 +1,21 @@
+@import '_settings.scss';
+
+@tailwind base;
+@tailwind components;
+
+html, body, .w-screen {
+    width: 100%;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.toasted {
+    font-size: 1rem !important;
+    width: 100% !important;
+    max-width: 500px !important;
+    font-weight: 600 !important;
+    padding: 0.75rem !important;
+    border-radius: 0.25rem !important;
+}
+
+@tailwind utilities;
