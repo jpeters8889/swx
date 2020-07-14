@@ -6,8 +6,8 @@ Vue.config.productionTip = false;
 
 import './components';
 
-(function() {
-    this.app = function(config) {
-        return new Application(config);
-    }
-}).call(window);
+window.app = function (config) {
+    return new Application(config);
+}
+
+app().build();

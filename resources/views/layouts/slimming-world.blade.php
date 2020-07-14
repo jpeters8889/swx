@@ -9,7 +9,7 @@
     <meta name="robots" content="noindex">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>Cheshire Slimming World Groups</title>
+    @include('page-view-builder::header')
 </head>
 <body class="mx-auto bg-grey-light flex">
 
@@ -25,12 +25,9 @@
         </div>
     </div>
 
-<script src="{{ mix('/assets/manifest.js') }}"></script>
-<script src="{{ mix('/assets/vendor.js') }}"></script>
-<script src="{{ mix('/assets/app.js') }}"></script>
+<script src="{{ mix('/assets/manifest.js') }}" async defer></script>
+<script src="{{ mix('/assets/vendor.js') }}" async defer></script>
+<script src="{{ mix('/assets/app.js') }}" async defer></script>
 
-<script>
-    app().build();
-</script>
 </body>
 </html>

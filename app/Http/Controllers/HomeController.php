@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Contracts\Routing\ResponseFactory;
+use JPeters\PageViewBuilder\Page;
 
 class HomeController
 {
-    public function get(ResponseFactory $response)
+    public function get(Page $page)
     {
-        return $response->view('welcome');
+        return $page->render('welcome');
     }
 }
