@@ -14,9 +14,9 @@
 <body class="mx-auto bg-grey-light flex">
 
     <div class="w-full px-4 flex-1 flex flex-col">
-        <div class="bg-sw-red p-2 flex flex-col text-white font-semibold text-center sm:flex-row sm:text-left sm:justify-between sm:items-center">
+        <div class="bg-sw-red p-2 flex flex-col text-white font-semibold text-center sm:items-center">
             <h1 class="text-xl mb-2 sm:mb-0">Cheshire Slimming World Groups</h1>
-            <h2>Pay Online</h2>
+            <h2>Book Online</h2>
         </div>
         <div class="flex-flex w-full bg-white border-sw-red border-2 border-t-0 rounded-b p-2">
             <div id="app">

@@ -95,6 +95,10 @@ const spacing = {
 };
 
 module.exports = {
+    purge: [
+        './resources/**/*.*'
+    ],
+    target: 'relaxed',
     prefix: '',
     important: false,
     separator: ':',

@@ -24,7 +24,7 @@ class CreateSessionsTable extends Migration
             $table->unsignedTinyInteger('advance_weeks_to_create')->default(3);
             $table->timestamps();
 
-            $table->unique(['group_id', 'day', 'start_at', 'end_at']);
+            $table->unique(['group_id', 'day_id', 'start_at', 'end_at']);
         });
     }
 
