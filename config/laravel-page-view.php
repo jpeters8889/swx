@@ -2,8 +2,8 @@
 
 return [
     'title' => [
-        'short' => 'Cheshire Slimming World Groups',
-        'full' => 'Cheshire Slimming World Groups',
+        'short' => 'Slimming World - Book Online',
+        'full' => 'Slimming World - Book Online',
         'separator' => '|',
     ],
 

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Architect\GroupBlueprint;
 use JPeters\Architect\Providers\ArchitectApplicationServiceProvider;
 
 class ArchitectServiceProvider extends ArchitectApplicationServiceProvider
@@ -13,7 +14,9 @@ class ArchitectServiceProvider extends ArchitectApplicationServiceProvider
 
     protected function blueprints()
     {
-        return [];
+        return [
+            GroupBlueprint::class,
+        ];
     }
 
     public function register()

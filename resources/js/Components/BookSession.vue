@@ -8,8 +8,8 @@
         <div v-if="showModal" @click.self="showModal = false"
              class="bg-black-80 fixed top-0 left-0 w-screen h-screen flex justify-center items-center">
             <div class="w-11/12 max-w-modal bg-sw-green rounded-lg p-1">
-                <div class="bg-grey-lightest p-2 flex flex-col">
-                    <h2 class="text-xl text-center text-semibold leading-none mb-1">{{ groupName }}</h2>
+                <div class="bg-grey-lightest p-2 flex flex-col rounded">
+                    <h2 class="text-xl text-center font-semibold leading-none mb-1">{{ groupName }}</h2>
                     <h3 class="text-center leading-none mb-4">
                         {{ groupDate }},
                         <slot></slot>
