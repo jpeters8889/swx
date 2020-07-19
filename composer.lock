@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "61869e3ca769d030c778c8cbd200f64c",
+    "content-hash": "ff7c6e0573417a7d09c3bafa649cd4c7",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1188,11 +1188,17 @@
         },
         {
             "name": "jpeters/architect",
-            "version": "0.2.0",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jpeters8889/architect.git",
+                "reference": "649491099aee27d4da5a8a2fa02622439d8ab180"
+            },
             "dist": {
-                "type": "path",
-                "url": "./../jpeters/architect",
-                "reference": "06430a9145f0bd44065d17d7111c7f4fd7c933b7"
+                "type": "zip",
+                "url": "https://api.github.com/repos/jpeters8889/architect/zipball/649491099aee27d4da5a8a2fa02622439d8ab180",
+                "reference": "649491099aee27d4da5a8a2fa02622439d8ab180",
+                "shasum": ""
             },
             "require": {
                 "doctrine/dbal": "^2.10",
@@ -1232,9 +1238,11 @@
                 }
             ],
             "description": "Architect",
-            "transport-options": {
-                "relative": true
-            }
+            "support": {
+                "source": "https://github.com/jpeters8889/architect/tree/0.2.1",
+                "issues": "https://github.com/jpeters8889/architect/issues"
+            },
+            "time": "2020-07-19T19:58:48+00:00"
         },
         {
             "name": "jpeters/laravel-page-view",
