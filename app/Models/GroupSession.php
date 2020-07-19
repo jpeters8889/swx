@@ -11,6 +11,10 @@ use Illuminate\Database\Eloquent\Model;
  */
 class GroupSession extends Model
 {
+    protected $appends = [
+        'type'
+    ];
+
     protected $guarded = [];
 
     protected $dates = [
@@ -24,6 +28,21 @@ class GroupSession extends Model
         }
 
         $this->members()->create($params);
+    }
+
+    public function getTypeAttribute()
+    {
+        $now = Carbon::now();
+
+        if($this->date->isSameWeek($now)) {
+            return 'next';
+        }
+
+        if($this->date->greaterThan($now)) {
+            return 'future';
+        }
+
+        return 'past';
     }
 
     public function group()
