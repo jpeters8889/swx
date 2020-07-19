@@ -15,7 +15,8 @@
         "jpeters/laravel-page-view": "^0.1.4",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
-        "spatie/laravel-sluggable": "^2.5"
+        "spatie/laravel-sluggable": "^2.5",
+        "spatie/test-time": "^1.2"
     },
     "require-dev": {
         "facade/ignition": "^2.0",

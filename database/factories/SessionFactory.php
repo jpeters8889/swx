@@ -8,7 +8,6 @@ use Faker\Generator as Faker;
 
 $factory->define(Session::class, function (Faker $faker) {
     return [
-        'group_id' => factory(Group::class)->create(),
         'day_id' => $faker->numberBetween(1, 7),
         'start_at' => '10:00',
         'end_at' => '11:00',

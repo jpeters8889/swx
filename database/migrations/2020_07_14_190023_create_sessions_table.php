@@ -1,5 +1,6 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,6 +22,7 @@ class CreateSessionsTable extends Migration
             $table->time('end_at');
             $table->unsignedTinyInteger('capacity');
             $table->boolean('new_member_session')->default(false);
+            $table->date('first_session_date')->default(Carbon::today());
             $table->unsignedTinyInteger('advance_weeks_to_create')->default(3);
             $table->timestamps();
 

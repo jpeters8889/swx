@@ -7,4 +7,4 @@ window.axios = axios;
 window._ = lodash;
 window.moment = moment;
 
-// icons();
+icons();

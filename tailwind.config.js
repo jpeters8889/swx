@@ -4,12 +4,17 @@ const colours = {
     sw: {
         black: '#292929',
         red: '#d3072a',
-        'red-dark': '##be0626',
+        'red-80': 'rgba(211,7,42,0.8)',
+        'red-dark': '#be0626',
         green: '#64b326',
+        'green-80': 'rgba(100,179,38,0.9)',
         purple: '#310757',
         'purple-dark': '#39303c',
         pink: '#ce2a60',
         blue: '#2c98c8',
+        'blue-80': 'rgba(44,152,200,0.8)',
+        'blue-dark': '#076190',
+        'blue-dark-80': 'rgba(7,97,144,0.8)',
     },
 
     black: {
@@ -268,7 +273,7 @@ module.exports = {
             '5xl': '64rem',
             '6xl': '72rem',
             full: '100%',
-            login: '350px',
+            modal: '700px',
         },
         minHeight: {
             '0': '0',

@@ -2,16 +2,24 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
+/**
+ * @property Carbon date
+ */
 class GroupSession extends Model
 {
- protected $guarded = [];
+    protected $guarded = [];
+
+    protected $dates = [
+        'date',
+    ];
 
     public function addMember(array $params)
     {
-        if(!$this->hasAvailableSlots()) {
+        if (!$this->hasAvailableSlots()) {
             throw new Exception('No slots available in this session');
         }
 
@@ -26,6 +34,11 @@ class GroupSession extends Model
     public function hasAvailableSlots(): bool
     {
         return $this->members->count() < $this->session->capacity;
+    }
+
+    public function isFull(): bool
+    {
+        return ! $this->hasAvailableSlots();
     }
 
     public function members()
