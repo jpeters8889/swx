@@ -24,7 +24,7 @@
             </table>
         </div>
 
-        <portal to="modal" v-if="showMembers">
+        <portal to="secondary-modal" v-if="showMembers">
             <modal>
                 <div class="absolute top-0 right-0 p-2 cursor-pointer" @click="showMembers = false">
                     <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>

@@ -671,7 +671,7 @@ var render = function() {
           _vm.showMembers
             ? _c(
                 "portal",
-                { attrs: { to: "modal" } },
+                { attrs: { to: "secondary-modal" } },
                 [
                   _c("modal", [
                     _c(

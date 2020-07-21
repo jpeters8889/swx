@@ -17,5 +17,7 @@ return [
         ArchitectIsRunning::class,
     ],
 
+    'can_change_password' => true,
+
     'gateway' => null,
 ];
