@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Http\Rule\RequiredIfNewMember;
 use App\Models\GroupSession;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -19,7 +18,7 @@ class BookingRequest extends FormRequest
     {
         return [
             'name' => 'required',
-            'phone' => new RequiredIfNewMember(),
+            'phone' => 'required',
         ];
     }
 
