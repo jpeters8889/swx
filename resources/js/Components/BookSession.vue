@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center" :class="backgroundClass" @click="openModal">
+        <div class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center"
+             :class="backgroundClass" @click="openModal">
             <span class="mb-1"><slot></slot></span>
             <span class="text-xs">{{ tooltip }}</span>
         </div>
@@ -28,12 +29,19 @@
                         </p>
 
                         <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="failed">
-                            Sorry, there was a problem booking you onto this session, please try again or select another session...
+                            Sorry, there was a problem booking you onto this session, please try again or select another
+                            session...
                         </p>
 
-                        <input type="text" v-model="name" placeholder="Your name..." class="border border-grey my-3 p-2 rounded w-98"/>
+                        <input type="text" v-model="name" placeholder="Your name..."
+                               class="border border-grey my-3 p-2 rounded w-98"/>
                         <input v-model="phone" type="tel" placeholder="Your phone number..."
                                class="border border-grey my-3 p-2 rounded w-98"/>
+
+                        <p class="mb-3">
+                            Anyone attending group (Including children) must book onto a session. Please only bring
+                            children if absolutely necessary as spaces are taken from members to accommodate them.
+                        </p>
 
                         <div class="flex justify-between leading-none text-xl">
                             <a class="bg-sw-red rounded p-2 text-semibold text-white" :href="'/'+groupSlug">
