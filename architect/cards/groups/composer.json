@@ -1,0 +1,21 @@
+{
+    "name": "sw/groups",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\Architect\\Cards\\Groups\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "App\\Architect\\Cards\\Groups\\CardServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
