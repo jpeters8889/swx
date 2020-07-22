@@ -15,8 +15,6 @@ class Session extends Model
     protected $appends = [
         'human_start_time',
         'human_end_time',
-        'upcoming_session_member_count',
-        'upcoming_group_session_id',
     ];
 
     protected $dates = [
@@ -63,31 +61,6 @@ class Session extends Model
     public function getCapacityThresholdAttribute()
     {
         return round($this->capacity * 0.8);
-    }
-
-    public function getUpcomingGroupSessionIdAttribute()
-    {
-        return $this->groupSessions()
-            ->where('date', '>=', Carbon::today())
-            ->orderBy('date')
-            ->first()
-            ->id;
-    }
-
-    public function getUpcomingSessionMemberCountAttribute()
-    {
-        /** @var GroupSession $session */
-        $session = $this->groupSessions()
-            ->where('date', '>=', Carbon::today())
-            ->orderBy('date')
-            ->first();
-
-        if ($session && $session->members()) {
-            return $session->members()
-                ->count();
-        }
-
-        return 0;
     }
 
     public function group()

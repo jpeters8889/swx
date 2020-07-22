@@ -1,10 +1,10 @@
 <template>
-    <ul class="my-2">
-        <li v-for="member in members">
-            {{ member.name }}
-            <template v-if="member.phone">
-                - {{ member.phone }}
-            </template>
+    <ul class="my-2 border-t border-blue-200">
+        <li class="p-2 border-b border-blue-200 font-semibold text-blue-700 bg-blue-200">
+            Name - Phone Number
+        </li>
+        <li v-for="member in members" class="p-2 border-b border-blue-200">
+            <span class="capitalize">{{ member.name }}</span> - {{ member.phone }}
         </li>
     </ul>
 </template>

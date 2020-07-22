@@ -6,58 +6,77 @@
                     <h3 class="text-xl text-gray-900 mb-2 font-semibold">{{ group.name }}</h3>
                     <h4 class="text-gray-700 font-semibold text-lg">Sessions</h4>
 
-                    <div class="flex flex-col lg:flex-row lg:justify-between lg:-mx-2">
-                        <div v-for="session in group.sessions" class="bg-gray-100 rounded p-2 my-2 lg:w-1/2 lg:mx-2">
-                            <div class="flex justify-between">
-                                <div class="flex flex-col mb-2">
-                                    <strong class="font-semibold">Day</strong>
-                                    {{ session.day.day }}
+                    <div class="flex flex-col lg:flex-row lg:justify-between lg:-mx-2 lg:flex-wrap">
+                        <div v-for="groupSession in group.group_sessions"
+                             class="p-2 lg:w-1/2">
+                            <div class="bg-gray-100 rounded p-2">
+                                <div class="flex justify-between">
+                                    <div class="flex flex-col mb-2">
+                                        <strong class="font-semibold">Date</strong>
+                                        {{ formatDate(groupSession.date) }}
+                                    </div>
+                                    <div class="flex flex-col mb-2">
+                                        <strong class="font-semibold">Time</strong>
+                                        {{ groupSession.session.human_start_time }} - {{
+                                        groupSession.session.human_end_time }}
+                                    </div>
                                 </div>
-                                <div class="flex flex-col mb-2">
-                                    <strong class="font-semibold">Time</strong>
-                                    {{ session.human_start_time }} - {{ session.human_end_time }}
+                                <div class="flex justify-between">
+                                    <strong class="font-semibold">Members</strong>
+                                    <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
+                                       v-tooltip="'View List'"
+                                       @click="viewMemberList(groupSession, group.name)">
+                                        {{ groupSession.members_count }}/{{ groupSession.session.capacity }}
+                                    </a>
                                 </div>
-                            </div>
-                            <div class="flex justify-between">
-                                <strong class="font-semibold">Upcoming Session</strong>
-                                <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
-                                   v-tooltip="'View List'"
-                                   @click="viewMemberList(session.upcoming_group_session_id, session.upcoming_session_member_count)">
-                                    {{ session.upcoming_session_member_count }}/{{ session.capacity }}
-                                </a>
-                            </div>
-                            <div class="flex flex-col mt-2">
-                                <a class="bg-blue-500 p-2 rounded text-white font-semibold text-center cursor-pointer transition-colour hover:bg-blue-400"
-                                   @click="manageSession(session.id, group.name)">
-                                    Manage Session
-                                </a>
                             </div>
                         </div>
                     </div>
+
+                    <h4 class="text-gray-700 font-semibold text-lg mt-4">View Session History</h4>
+
+                    <ul class="my-2">
+                        <li v-for="session in group.sessions" class="cursor-pointer hover:underline font-semibold"
+                            @click="viewSessionHistory(session.id, group.name)">
+                            {{ session.day.day }}'s, {{ session.human_start_time }}
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
 
-        <portal to="modal" v-if="showMembers">
+        <portal to="modal" v-if="showMemberModal">
             <modal>
-                <div class="absolute top-0 right-0 p-2 cursor-pointer" @click="showMembers = false">
-                    <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
-                </div>
+                <div class="w-full bg-gray-100 p-2">
+                    <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
+                         @click="showMemberModal = false">
+                        <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
+                    </div>
 
-                <div class="w-full">
-                    <groups-member-list :group-session-id="viewGroupSessionId"></groups-member-list>
+                    <p class="font-semibold text-lg">
+                        Member List for {{ viewedName }}, {{ formatDate(viewedSession.date) }} - {{
+                        viewedSession.session.human_start_time }}
+                    </p>
+
+                    <p>
+                        <a :href="'/admin/api/external/groups/printMembers/'+viewedSession.id" target="_blank">Printer
+                            Friendly List</a>
+                    </p>
+
+                    <groups-member-list :group-session-id="viewedSession.id"></groups-member-list>
                 </div>
             </modal>
         </portal>
 
-        <portal to="modal" v-if="showSessionModal">
+        <portal to="modal" v-if="showSessionDetail">
             <modal>
-                <div class="absolute top-0 right-0 p-2 cursor-pointer" @click="showSessionModal = false">
-                    <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
-                </div>
+                <div class="w-full bg-gray-100 p-2">
+                    <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
+                         @click="showSessionDetail = false">
+                        <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
+                    </div>
 
-                <div class="w-full">
-                    <group-manage-session :group-name="groupName" :session-id="sessionId"></group-manage-session>
+                    <session-history :group-name="viewedName" :session-id="sessionId"></session-history>
                 </div>
             </modal>
         </portal>
@@ -65,7 +84,9 @@
 </template>
 
 <script>
+    import SessionHistory from "./SessionHistory";
     export default {
+        components: {SessionHistory},
         props: {
             data: Object | Array,
             labels: Object | Array,
@@ -74,12 +95,12 @@
         data: () => ({
             groups: [],
 
-            showMembers: false,
-            viewGroupSessionId: 0,
+            viewedSession: null,
+            viewedName: null,
+            showMemberModal: false,
 
-            showSessionModal: false,
-            groupName: '',
-            sessionId: 0,
+            showSessionDetail: false,
+            sessionId: null,
         }),
 
         mounted() {
@@ -89,19 +110,24 @@
         },
 
         methods: {
-            viewMemberList(groupSessionId, count) {
-                if (count === 0) {
+            formatDate(date, format = 'Do MMMM YYYY') {
+                return moment(date).format(format);
+            },
+
+            viewMemberList(groupSession, name) {
+                if (groupSession.members_count === 0) {
                     return;
                 }
 
-                this.viewGroupSessionId = groupSessionId;
-                this.showMembers = true;
+                this.viewedName = name;
+                this.viewedSession = groupSession;
+                this.showMemberModal = true;
             },
 
-            manageSession(id, name) {
+            viewSessionHistory(id, name) {
+                this.viewedName = name
                 this.sessionId = id;
-                this.groupName = name;
-                this.showSessionModal = true;
+                this.showSessionDetail = true;
             }
         }
     }

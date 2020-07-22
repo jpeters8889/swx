@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Session;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use JPeters\PageViewBuilder\Page;
 
@@ -24,6 +25,7 @@ class GroupController extends Controller
                 ->orderBy('date')
                 ->with('session')
                 ->withCount('members')
+                ->where('date', '>=', Carbon::today())
                 ->get()
                 ->groupBy(fn(GroupSession $groupSession) => $groupSession->date->getTimestamp()),
         ]);

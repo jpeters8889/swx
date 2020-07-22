@@ -15,6 +15,7 @@ class CardServiceProvider extends ServiceProvider
 
             $architect->apiManager->registerEndpoint('get', 'groups', ApiHandler::class, 'list');
             $architect->apiManager->registerEndpoint('get', 'groups', ApiHandler::class, 'members');
+            $architect->apiManager->registerEndpoint('get', 'groups', ApiHandler::class, 'printMembers');
             $architect->apiManager->registerEndpoint('get', 'groups', ApiHandler::class, 'session');
 
             $architect->assetManager->registerScript('Groups', __DIR__.'/../dist/card.js');

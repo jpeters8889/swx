@@ -1,8 +1,8 @@
 <template>
     <div>
-        <div class="rounded p-2 m-1 cursor-pointer transition-bg block" :class="backgroundClass"
-             v-tooltip.bottom-start="tooltip" @click="openModal">
-            <slot></slot>
+        <div class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center" :class="backgroundClass" @click="openModal">
+            <span class="mb-1"><slot></slot></span>
+            <span class="text-xs">{{ tooltip }}</span>
         </div>
 
         <div v-if="showModal" @click.self="showModal = false"
@@ -23,7 +23,7 @@
                             </template>
 
                             <template v-else>
-                                Please enter your name below to register for this session.
+                                Please enter your name and phone number below to register for this session.
                             </template>
                         </p>
 
@@ -32,15 +32,15 @@
                         </p>
 
                         <input type="text" v-model="name" placeholder="Your name..." class="border border-grey my-3 p-2 rounded w-98"/>
-                        <input v-if="newMember" v-model="phone" type="tel" placeholder="Your phone number..."
+                        <input v-model="phone" type="tel" placeholder="Your phone number..."
                                class="border border-grey my-3 p-2 rounded w-98"/>
 
-                        <div class="flex flex-col-reverse justify-center">
+                        <div class="flex justify-between leading-none text-xl">
                             <a class="bg-sw-red rounded p-2 text-semibold text-white" :href="'/'+groupSlug">
                                 Cancel
                             </a>
 
-                            <button class="bg-sw-green rounded mb-2 p-2 text-semibold text-white" @click="submitBooking()">
+                            <button class="bg-sw-green rounded p-2 text-semibold text-white" @click="submitBooking()">
                                 Confirm
                             </button>
                         </div>
@@ -169,18 +169,22 @@
 
             tooltip: function () {
                 if (this.currentCount === this.capacity) {
-                    return 'Sorry, this Session is full';
+                    return 'Fully Booked';
                 }
 
                 if (this.newMember) {
-                    return 'New Member Introductory Session';
+                    if (this.currentCount >= this.capacityThreshold) {
+                        return 'New Member Session - Low Availability';
+                    }
+
+                    return 'New Member Session';
                 }
 
                 if (this.currentCount >= this.capacityThreshold) {
-                    return 'This Session is nearly full!';
+                    return 'Low Availability';
                 }
 
-                return 'Click to book now!';
+                return 'Standard Session';
             }
         }
     }

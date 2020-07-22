@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "6849b9d980d83c0dbdc1b8a33ffc0d69",
+    "content-hash": "7679287a9bdcdd01caa89190affd7d4a",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -1188,16 +1188,16 @@
         },
         {
             "name": "jpeters/architect",
-            "version": "0.2.2",
+            "version": "0.2.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jpeters8889/architect.git",
-                "reference": "6fabd9f6fa16dcfe50dd3940ef587635735f4887"
+                "reference": "9c94076ae891ec51a3798be8d354aea2c9a896b2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jpeters8889/architect/zipball/6fabd9f6fa16dcfe50dd3940ef587635735f4887",
-                "reference": "6fabd9f6fa16dcfe50dd3940ef587635735f4887",
+                "url": "https://api.github.com/repos/jpeters8889/architect/zipball/9c94076ae891ec51a3798be8d354aea2c9a896b2",
+                "reference": "9c94076ae891ec51a3798be8d354aea2c9a896b2",
                 "shasum": ""
             },
             "require": {
@@ -1237,7 +1237,12 @@
                     "email": "jamie@jamie-peters.co.uk"
                 }
             ],
-            "description": "Architect"
+            "description": "Architect",
+            "support": {
+                "source": "https://github.com/jpeters8889/architect/tree/0.2.3",
+                "issues": "https://github.com/jpeters8889/architect/issues"
+            },
+            "time": "2020-07-22T18:59:01+00:00"
         },
         {
             "name": "jpeters/laravel-page-view",
