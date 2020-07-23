@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property Carbon first_session_date
+ * @property string human_start_time
  */
 class Session extends Model
 {

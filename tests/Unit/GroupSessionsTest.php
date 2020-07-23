@@ -3,6 +3,8 @@
 namespace Tests\Unit;
 
 use App\Events\SessionCreated;
+use App\Exceptions\MemberAlreadyOnSessionException;
+use App\Exceptions\SessionFullException;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
@@ -79,9 +81,22 @@ class GroupSessionsTest extends TestCase
 
         $this->groupSession->addMember(factory(Member::class)->raw());
 
-        $this->expectException(\Exception::class);
+        $this->expectException(SessionFullException::class);
         $this->expectExceptionMessage('No slots available in this session');
 
         $this->groupSession->fresh()->addMember(factory(Member::class)->raw());
+    }
+
+    /** @test */
+    public function it_errors_when_trying()
+    {
+        $member = factory(Member::class)->raw();
+
+        $this->groupSession->addMember($member);
+
+        $this->expectException(MemberAlreadyOnSessionException::class);
+        $this->expectExceptionMessage('Member already exists on this session');
+
+        $this->groupSession->fresh()->addMember($member);
     }
 }

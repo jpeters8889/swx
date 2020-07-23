@@ -8,13 +8,7 @@ request.defaults.headers.common['X-CSRF-TOKEN'] = document.querySelector('meta[n
 request.interceptors.response.use(
     response => response,
     error => {
-        const status = error.response;
-
-        if (status >= 500) {
-            Application.$emit('error', error.response.data.message);
-        }
-
-        return Promise.reject(error);
+        return Promise.reject(error.response);
     }
 );
 

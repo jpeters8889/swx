@@ -16,7 +16,7 @@
                         <slot></slot>
                     </h3>
 
-                    <template v-if="!loading && !booked">
+                    <template v-if="!loading">
                         <p class="text-lg text-center mb-2">
                             <template v-if="newMember">
                                 Please enter your name and phone number below to register for this session, as a new
@@ -28,15 +28,49 @@
                             </template>
                         </p>
 
-                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="failed">
+                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="failed && !errors.sessionFull && !errors.conflict">
                             Sorry, there was a problem booking you onto this session, please try again or select another
                             session...
                         </p>
 
-                        <input type="text" v-model="name" placeholder="Your name..."
-                               class="border border-grey my-3 p-2 rounded w-98"/>
-                        <input v-model="phone" type="tel" placeholder="Your phone number..."
-                               class="border border-grey my-3 p-2 rounded w-98"/>
+                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="errors.sessionFull">
+                            Sorry, this session is full, please choose another one.
+                        </p>
+
+                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="errors.conflict">
+                            Sorry, you're already booked on this session!
+                        </p>
+
+                        <div class="my-3">
+                            <input type="text" v-model="fields.name" placeholder="Your name..."
+                                   class="border border-grey p-2 rounded w-98"/>
+
+                            <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.name">
+                                Please enter your name.
+                            </span>
+                        </div>
+
+                        <div class="my-3">
+                            <input type="email" v-model="fields.email" placeholder="Your email address..."
+                                   class="border border-grey p-2 rounded w-98"/>
+
+                            <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.email">
+                                Please enter your email.
+                            </span>
+
+                            <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.validEmail">
+                                Please enter a valid email address.
+                            </span>
+                        </div>
+
+                        <div class="my-3">
+                            <input v-model="fields.phone" type="tel" placeholder="Your phone number..."
+                                   class="border border-grey p-2 rounded w-98"/>
+
+                            <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.phone">
+                                Please enter your phone number.
+                            </span>
+                        </div>
 
                         <p class="mb-3">
                             Anyone attending group (Including children) must book onto a session. Please only bring
@@ -51,18 +85,6 @@
                             <button class="bg-sw-green rounded p-2 text-semibold text-white" @click="submitBooking()">
                                 Confirm
                             </button>
-                        </div>
-                    </template>
-
-                    <template v-if="booked">
-                        <p class="text-lg text-center mb-2">
-                            Thank you, you're now booked on this session!
-                        </p>
-
-                        <div class="flex flex-col-reverse justify-center">
-                            <a class="bg-sw-red rounded p-2 text-semibold text-white" href="/">
-                                Close
-                            </a>
                         </div>
                     </template>
 
@@ -119,10 +141,22 @@
         data: () => ({
             showModal: false,
             loading: false,
-            booked: false,
             failed: false,
-            name: '',
-            phone: null,
+
+            fields: {
+                name: '',
+                email: '',
+                phone: '',
+            },
+
+            errors: {
+                sessionFull: false,
+                conflict: false,
+                name: false,
+                email: false,
+                phone: false,
+                validEmail: false,
+            }
         }),
 
         methods: {
@@ -136,21 +170,25 @@
             },
 
             submitBooking() {
-                this.booked = false;
+                Object.keys(this.errors).forEach((key) => {
+                    this.errors[key] = false;
+                })
+
                 this.failed = false;
                 this.loading = true;
 
-                app().request().post(`${this.groupSlug}/${this.groupSessionId}`, {
-                    name: this.name,
-                    phone: this.phone,
-                }).then((response) => {
-                    if (response.status === 200) {
-                        this.booked = true;
-                        return;
+                app().request().post(`${this.groupSlug}/${this.groupSessionId}`, this.fields).then((response) => {
+                    window.location.href = '/thanks';
+                }).catch((response) => {
+                    Object.keys(response.data.errors).forEach((key) => {
+                        this.errors[key] = true;
+                    });
+
+                    if (response.data.errors.email && response.data.errors.email[0] === 'validation.email') {
+                        this.errors.email = false;
+                        this.errors.validEmail = true;
                     }
 
-                    this.failed = true;
-                }).catch(() => {
                     this.failed = true;
                 }).finally(() => {
                     this.loading = false;

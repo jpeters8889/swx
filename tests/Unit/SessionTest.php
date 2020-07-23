@@ -73,21 +73,4 @@ class SessionTest extends TestCase
         $this->expectException(QueryException::class);
         factory(Session::class)->create($sessionParams);
     }
-
-    /** @test */
-    public function it_gets_the_upcoming_sessions_current_member_count()
-    {
-        /** @var GroupSession $groupSession */
-        $groupSession = GroupSession::query()->create([
-            'group_id' => $this->session->group->id,
-            'session_id' => $this->session->id,
-            'date' => Carbon::today(),
-        ]);
-
-        $this->assertEquals(0, $this->session->upcoming_session_member_count);
-
-        $groupSession->addMember(['name' => 'Jamie']);
-
-        $this->assertEquals(1, $this->session->fresh()->upcoming_session_member_count);
-    }
 }

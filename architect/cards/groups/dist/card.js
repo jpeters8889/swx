@@ -678,7 +678,7 @@ var render = function() {
           staticClass:
             "p-2 border-b border-blue-200 font-semibold text-blue-700 bg-blue-200"
         },
-        [_vm._v("\n        Name - Phone Number\n    ")]
+        [_vm._v("\n        Name | Email Address | Phone Number\n    ")]
       ),
       _vm._v(" "),
       _vm._l(_vm.members, function(member) {
@@ -686,7 +686,13 @@ var render = function() {
           _c("span", { staticClass: "capitalize" }, [
             _vm._v(_vm._s(member.name))
           ]),
-          _vm._v(" - " + _vm._s(member.phone) + "\n    ")
+          _vm._v(
+            " | " +
+              _vm._s(member.email) +
+              " | " +
+              _vm._s(member.phone) +
+              "\n    "
+          )
         ])
       })
     ],

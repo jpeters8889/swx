@@ -2,21 +2,30 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\MemberAlreadyOnSessionException;
+use App\Exceptions\SessionFullException;
 use App\Http\Requests\BookingRequest;
+use App\Notifications\BookingConfirmed;
 use Illuminate\Http\Response;
+use Illuminate\Session\Store;
 
 class BookingController extends Controller
 {
-    public function create(BookingRequest $request)
+    public function create(BookingRequest $request, Store $sessionStore)
     {
         $groupSession = $request->groupSession();
 
-        if($groupSession->isFull()) {
-            return new Response(['error' => 'Session is full'], 422);
+        try {
+            $member = $groupSession->addMember($request->validated());
+
+            $member->notify(new BookingConfirmed());
+            $sessionStore->put('booking_id', $member->id);
+
+            return new Response();
+        } catch (MemberAlreadyOnSessionException $e) {
+            return new Response(['errors' => ['conflict' => $e->getMessage()]], 409);
+        } catch (SessionFullException $e) {
+            return new Response(['errors' => ['sessionFull' => $e->getMessage()]], 422);
         }
-
-        $groupSession->addMember($request->all());
-
-        return new Response();
     }
 }

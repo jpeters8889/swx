@@ -11,6 +11,8 @@ use Spatie\Sluggable\SlugOptions;
 
 /**
  * @property EloquentCollection sessions
+ * @property string name
+ * @property User user
  */
 class Group extends Model
 {

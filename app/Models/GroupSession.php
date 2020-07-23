@@ -2,12 +2,16 @@
 
 namespace App\Models;
 
+use App\Exceptions\MemberAlreadyOnSessionException;
+use App\Exceptions\SessionFullException;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property Carbon date
+ * @property Session session
+ * @property Group group
  */
 class GroupSession extends Model
 {
@@ -21,13 +25,23 @@ class GroupSession extends Model
         'date',
     ];
 
-    public function addMember(array $params)
+    /**
+     * @param array $params
+     * @return Member
+     * @throws MemberAlreadyOnSessionException
+     * @throws SessionFullException
+     */
+    public function addMember(array $params): Member
     {
         if (!$this->hasAvailableSlots()) {
-            throw new Exception('No slots available in this session');
+            throw new SessionFullException('No slots available in this session');
         }
 
-        $this->members()->create($params);
+        if($this->hasMember($params)) {
+            throw new MemberAlreadyOnSessionException('Member already exists on this session');
+        }
+
+        return $this->members()->create($params);
     }
 
     public function getTypeAttribute()
@@ -53,6 +67,17 @@ class GroupSession extends Model
     public function hasAvailableSlots(): bool
     {
         return $this->members->count() < $this->session->capacity;
+    }
+
+    public function hasMember($params): bool
+    {
+        $query = $this->members();
+
+        foreach($params as $key => $value) {
+            $query->where($key, $value);
+        }
+
+        return $query->exists();
     }
 
     public function isFull(): bool
