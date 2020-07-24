@@ -3,7 +3,7 @@
         <div class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center"
              :class="backgroundClass" @click="openModal">
             <span class="mb-1"><slot></slot></span>
-            <span class="text-xs">{{ tooltip }}</span>
+            <span class="text-xs text-center" v-html="tooltip"></span>
         </div>
 
         <div v-if="showModal" @click.self="showModal = false"
@@ -18,14 +18,7 @@
 
                     <template v-if="!loading">
                         <p class="text-lg text-center mb-2">
-                            <template v-if="newMember">
-                                Please enter your name and phone number below to register for this session, as a new
-                                member please make sure you've confirmed with the consultant first.
-                            </template>
-
-                            <template v-else>
                                 Please enter your name and phone number below to register for this session.
-                            </template>
                         </p>
 
                         <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="failed && !errors.sessionFull && !errors.conflict">
@@ -120,10 +113,6 @@
                 type: String,
                 required: true,
             },
-            newMember: {
-                type: Boolean,
-                required: true,
-            },
             capacity: {
                 type: Number,
                 required: true,
@@ -215,10 +204,14 @@
                 }
 
                 if (this.currentCount >= this.capacityThreshold) {
-                    return 'Low Availability';
+                    return `Low Availability<br/>(${this.remainingSlots} spaces available)`;
                 }
 
-                return 'Good Availability';
+                return `Good Availability<br/>(${this.remainingSlots} spaces available)`;
+            },
+
+            remainingSlots: function() {
+                return this.capacity - this.currentCount;
             }
         }
     }
