@@ -202,15 +202,11 @@
                     return ['bg-sw-red', 'hover:bg-sw-red-80'];
                 }
 
-                if (this.newMember) {
-                    return ['bg-sw-green', 'hover:bg-sw-green-80'];
-                }
-
                 if (this.currentCount >= this.capacityThreshold) {
-                    return ['bg-sw-blue-dark', 'hover:bg-sw-blue-dark-80'];
+                    return ['bg-sw-blue', 'hover:bg-sw-blue-80'];
                 }
 
-                return ['bg-sw-blue', 'hover:bg-sw-blue-80'];
+                return ['bg-sw-green', 'hover:bg-sw-green-80'];
             },
 
             tooltip: function () {
@@ -218,19 +214,11 @@
                     return 'Fully Booked';
                 }
 
-                if (this.newMember) {
-                    if (this.currentCount >= this.capacityThreshold) {
-                        return 'New Member Session - Low Availability';
-                    }
-
-                    return 'New Member Session';
-                }
-
                 if (this.currentCount >= this.capacityThreshold) {
                     return 'Low Availability';
                 }
 
-                return 'Standard Session';
+                return 'Good Availability';
             }
         }
     }
