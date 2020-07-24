@@ -15,8 +15,6 @@
                         </div>
                     @endforeach
                 </div>
-
-                <span class="text-xs mt-2">* denotes a new member session only.</span>
             </a>
         @endforeach
     </div>
