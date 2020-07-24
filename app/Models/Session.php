@@ -10,12 +10,17 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Carbon first_session_date
  * @property string human_start_time
+ * @property int capacity_threshold
  */
 class Session extends Model
 {
     protected $appends = [
         'human_start_time',
         'human_end_time',
+    ];
+
+    protected $casts = [
+        'capacity_threshold' => 'int',
     ];
 
     protected $dates = [
@@ -61,7 +66,7 @@ class Session extends Model
 
     public function getCapacityThresholdAttribute()
     {
-        return round($this->capacity * 0.8);
+        return (int) round($this->capacity * 0.8);
     }
 
     public function group()

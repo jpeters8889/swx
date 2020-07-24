@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
+use App\Events\MemberBookedOntoSession;
 use App\Events\SessionCreated;
+use App\Listeners\CheckSessionCapacities;
 use App\Listeners\CreateInitialGroupSessions;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
+use App\Listeners\SendBookingConfirmation;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -19,6 +19,11 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         SessionCreated::class => [
             CreateInitialGroupSessions::class,
+        ],
+
+        MemberBookedOntoSession::class => [
+          SendBookingConfirmation::class,
+            CheckSessionCapacities::class,
         ],
     ];
 

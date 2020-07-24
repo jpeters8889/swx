@@ -6,12 +6,14 @@ use App\Exceptions\MemberAlreadyOnSessionException;
 use App\Exceptions\SessionFullException;
 use Carbon\Carbon;
 use Exception;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property Carbon date
  * @property Session session
  * @property Group group
+ * @property Collection<Member> members
  */
 class GroupSession extends Model
 {

@@ -1,0 +1,160 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Events\SessionCreated;
+use App\Models\Group;
+use App\Models\GroupSession;
+use App\Models\Member;
+use App\Models\Session;
+use App\Models\User;
+use App\Notifications\BookingConfirmed;
+use App\Notifications\SessionNearingCapacity;
+use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Str;
+use Mockery\Matcher\Not;
+use Tests\TestCase;
+
+class SessionAlmostFullNotificationTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        Event::fake(SessionCreated::class);
+        Notification::fake();
+
+        factory(Group::class)->create(['name' => 'Test Group', 'user_id' => factory(User::class)->create(['name' => 'Jamie Peters'])]);
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '11:30', 'capacity' => 5]);
+
+        GroupSession::query()->create([
+            'group_id' => 1,
+            'session_id' => 1,
+            'date' => Carbon::parse('2020-08-01'),
+        ]);
+
+        factory(Member::class, 3)->create(['group_session_id' => 1]);
+    }
+
+    /** @test */
+    public function it_doesnt_send_notifications_when_the_limit_isnt_met()
+    {
+        Notification::assertNotSentTo(User::query()->first(), SessionNearingCapacity::class);
+    }
+
+    /**
+     * @test
+     * @dataProvider notification_callbacks
+     */
+    public function it_dispatches_the_notification_when_the_group_is_nearing_limit($callback)
+    {
+        // The session currently has 3 out of 5 members, if we book a fourth
+        // then we hit the 80% limit and a notification should be sent to the
+        // group owner.
+
+        $this->post("/test-group/1", [
+            'name' => 'Foo Bar',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+        ]);
+
+        Notification::assertSentTo(
+            User::query()->first(),
+            SessionNearingCapacity::class,
+            $callback
+        );
+    }
+
+    public function notification_callbacks()
+    {
+        return [
+            [null],
+
+            // Group Session
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                return $notification->groupSession->is(GroupSession::query()->first());
+            }],
+
+            // To
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                return $user->is(Group::query()->first()->user);
+            }],
+
+            // Mail Channel
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                return $channels === ['mail'];
+            }],
+
+            // From Name
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                return $notification->toMail($user)->from[1] === $notification->groupSession->group->name;
+            }],
+
+            // Subject Line
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                return $notification->toMail($user)->subject === 'Session Nearing Capacity Limit';
+            }],
+
+            // Greeting Line
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                return $notification->toMail($user)->greeting === 'Session Nearing Capacity Limit';
+            }],
+
+            // Message Content
+            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+                /** @var GroupSession $groupSession */
+                $groupSession = GroupSession::query()->first();
+                $message = $notification->toMail($user)->introLines;
+
+                $assertions = [
+                    Str::contains($message[0], $groupSession->group->name),
+                    Str::contains($message[0], $groupSession->date->format('l jS F Y')),
+                    Str::contains($message[0], $groupSession->session->human_start_time),
+                ];
+
+                return !in_array(false, $assertions, true);
+            }],
+        ];
+    }
+
+    /** @test */
+    public function it_doesnt_send_when_the_group_is_past_the_threshold()
+    {
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '12:30', 'capacity' => 20]);
+
+        GroupSession::query()->create([
+            'group_id' => 1,
+            'session_id' => 2,
+            'date' => Carbon::parse('2020-08-01'),
+        ]);
+
+        // We've booked 15 members on
+        factory(Member::class, 15)->create(['group_session_id' => 2]);
+
+        // Number 16 will trigger the notification
+        $this->post("/test-group/2", [
+            'name' => 'Foo Bar',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+        ]);
+
+        // Number 17 shouldn't
+        $this->post("/test-group/2", [
+            'name' => 'Jamie Peters',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+        ]);
+
+        // So we should have one notification
+        Notification::assertSentToTimes(
+            User::query()->first(),
+            SessionNearingCapacity::class,
+            1
+        );
+    }
+}
