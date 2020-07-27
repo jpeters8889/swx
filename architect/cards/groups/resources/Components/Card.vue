@@ -4,30 +4,29 @@
             <div class="flex flex-col">
                 <div v-for="group in groups" class="bg-blue-100 p-2 rounded my-2">
                     <h3 class="text-xl text-gray-900 mb-2 font-semibold">{{ group.name }}</h3>
-                    <h4 class="text-gray-700 font-semibold text-lg">Sessions</h4>
 
-                    <div class="flex flex-col lg:flex-row lg:justify-between lg:-mx-2 lg:flex-wrap">
-                        <div v-for="groupSession in group.group_sessions"
-                             class="p-2 lg:w-1/2">
-                            <div class="bg-gray-100 rounded p-2">
-                                <div class="flex justify-between">
-                                    <div class="flex flex-col mb-2">
-                                        <strong class="font-semibold">Date</strong>
-                                        {{ formatDate(groupSession.date) }}
-                                    </div>
+                    <div v-for="(groupSessions, date) in group.processedGroups">
+                        <h4 class="text-gray-700 font-semibold text-lg">
+                            {{ formatDate(date) }}
+                        </h4>
+
+                        <div class="flex flex-col lg:flex-row lg:justify-between lg:-mx-2 lg:flex-wrap">
+                            <div v-for="groupSession in groupSessions"
+                                 class="p-2 lg:w-1/2">
+                                <div class="bg-gray-100 rounded p-2 flex justify-between">
                                     <div class="flex flex-col mb-2">
                                         <strong class="font-semibold">Time</strong>
                                         {{ groupSession.session.human_start_time }} - {{
                                         groupSession.session.human_end_time }}
                                     </div>
-                                </div>
-                                <div class="flex justify-between">
-                                    <strong class="font-semibold">Members</strong>
-                                    <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
-                                       v-tooltip="'View List'"
-                                       @click="viewMemberList(groupSession, group.name)">
-                                        {{ groupSession.members_count }}/{{ groupSession.session.capacity }}
-                                    </a>
+                                    <div class="flex flex-col mb-2 text-right">
+                                        <strong class="font-semibold">Members</strong>
+                                        <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
+                                           v-tooltip="'View List'"
+                                           @click="viewMemberList(groupSession, group.name)">
+                                            {{ groupSession.members_count }}/{{ groupSession.session.capacity }}
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -85,6 +84,7 @@
 
 <script>
     import SessionHistory from "./SessionHistory";
+
     export default {
         components: {SessionHistory},
         props: {
@@ -106,7 +106,24 @@
         mounted() {
             window.Architect.request().get('/external/groups/list').then((response) => {
                 this.groups = response.data;
-            })
+
+                this.groups.map((group) => {
+                    console.log(group);
+                    let processedGroups = {};
+
+                    group.group_sessions.forEach((groupSession) => {
+                        if (!Object.keys(processedGroups).includes(groupSession.date)) {
+                            this.$set(processedGroups, groupSession.date, []);
+                        }
+
+                        processedGroups[groupSession.date].push(groupSession);
+                    });
+
+                    group.processedGroups = processedGroups;
+                });
+
+                console.log(this.groups);
+            });
         },
 
         methods: {
