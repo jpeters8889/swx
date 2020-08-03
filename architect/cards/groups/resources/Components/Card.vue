@@ -17,7 +17,8 @@
                                     <div class="flex flex-col mb-2">
                                         <strong class="font-semibold">Time</strong>
                                         {{ groupSession.session.human_start_time }} - {{
-                                        groupSession.session.human_end_time }}
+                                            groupSession.session.human_end_time
+                                        }}
                                     </div>
                                     <div class="flex flex-col mb-2 text-right">
                                         <strong class="font-semibold">Members</strong>
@@ -54,7 +55,8 @@
 
                     <p class="font-semibold text-lg">
                         Member List for {{ viewedName }}, {{ formatDate(viewedSession.date) }} - {{
-                        viewedSession.session.human_start_time }}
+                            viewedSession.session.human_start_time
+                        }}
                     </p>
 
                     <p>
@@ -83,69 +85,66 @@
 </template>
 
 <script>
-    import SessionHistory from "./SessionHistory";
+import SessionHistory from "./SessionHistory";
 
-    export default {
-        components: {SessionHistory},
-        props: {
-            data: Object | Array,
-            labels: Object | Array,
-        },
+export default {
+    components: {SessionHistory},
+    props: {
+        data: Object | Array,
+        labels: Object | Array,
+    },
 
-        data: () => ({
-            groups: [],
+    data: () => ({
+        groups: [],
 
-            viewedSession: null,
-            viewedName: null,
-            showMemberModal: false,
+        viewedSession: null,
+        viewedName: null,
+        showMemberModal: false,
 
-            showSessionDetail: false,
-            sessionId: null,
-        }),
+        showSessionDetail: false,
+        sessionId: null,
+    }),
 
-        mounted() {
-            window.Architect.request().get('/external/groups/list').then((response) => {
-                this.groups = response.data;
+    mounted() {
+        window.Architect.request().get('/external/groups/list').then((response) => {
+            this.groups = response.data;
 
-                this.groups.map((group) => {
-                    console.log(group);
-                    let processedGroups = {};
+            this.groups.map((group) => {
+                let processedGroups = {};
 
-                    group.group_sessions.forEach((groupSession) => {
-                        if (!Object.keys(processedGroups).includes(groupSession.date)) {
-                            this.$set(processedGroups, groupSession.date, []);
-                        }
+                group.group_sessions.forEach((groupSession) => {
+                    if (!Object.keys(processedGroups).includes(groupSession.date)) {
+                        this.$set(processedGroups, groupSession.date, []);
+                    }
 
-                        processedGroups[groupSession.date].push(groupSession);
-                    });
-
-                    group.processedGroups = processedGroups;
+                    processedGroups[groupSession.date].push(groupSession);
                 });
 
-                console.log(this.groups);
+                group.processedGroups = processedGroups.sort((a, b) => parseInt(a.session.start_at.split(':')[0]) - parseInt(b.session.start_at.split(':')[0]));
             });
+        });
+    },
+
+    methods: {
+        formatDate(date, format = 'Do MMMM YYYY') {
+            return moment(date).format(format);
         },
 
-        methods: {
-            formatDate(date, format = 'Do MMMM YYYY') {
-                return moment(date).format(format);
-            },
-
-            viewMemberList(groupSession, name) {
-                if (groupSession.members_count === 0) {
-                    return;
-                }
-
-                this.viewedName = name;
-                this.viewedSession = groupSession;
-                this.showMemberModal = true;
-            },
-
-            viewSessionHistory(id, name) {
-                this.viewedName = name
-                this.sessionId = id;
-                this.showSessionDetail = true;
+        viewMemberList(groupSession, name) {
+            if (groupSession.members_count === 0) {
+                return;
             }
+
+            this.viewedName = name;
+            this.viewedSession = groupSession;
+            this.showMemberModal = true;
+        },
+
+        viewSessionHistory(id, name) {
+            this.viewedName = name
+            this.sessionId = id;
+            this.showSessionDetail = true;
         }
     }
+}
 </script>

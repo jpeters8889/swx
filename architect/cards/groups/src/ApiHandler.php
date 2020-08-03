@@ -24,7 +24,8 @@ class ApiHandler
                     ->withCount('members')
                     ->where('date', '>=', Carbon::today())
                     ->orderBy('date'),
-                'groupSessions.session', 'groupSessions.session.day'
+                'groupSessions.session',
+                'groupSessions.session.day'
             ])
             ->orderBy('name')
             ->get();
