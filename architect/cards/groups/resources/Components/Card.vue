@@ -120,7 +120,9 @@ export default {
                     processedGroups[groupSession.date].push(groupSession);
                 });
 
-                group.processedGroups = processedGroups.sort((a, b) => parseInt(a.session.start_at.split(':')[0]) - parseInt(b.session.start_at.split(':')[0]));
+                processedGroups.map((group) => group.sort((a, b) => parseInt(a.session.start_at.split(':')[0]) - parseInt(b.session.start_at.split(':')[0])));
+
+                group.processedGroups = processedGroups;
             });
         });
     },
