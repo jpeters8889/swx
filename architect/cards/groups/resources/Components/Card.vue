@@ -120,7 +120,11 @@ export default {
                     processedGroups[groupSession.date].push(groupSession);
                 });
 
-                processedGroups.map((group) => group.sort((a, b) => parseInt(a.session.start_at.split(':')[0]) - parseInt(b.session.start_at.split(':')[0])));
+                Object.keys(processedGroups).each((key) => {
+                    processedGroups[key] = processedGroups[key].map((group) => {
+                        group.sort((a, b) => parseInt(a.session.start_at.split(':')[0]) - parseInt(b.session.start_at.split(':')[0]))
+                    });
+                });
 
                 group.processedGroups = processedGroups;
             });
