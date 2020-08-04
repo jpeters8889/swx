@@ -12,13 +12,13 @@ class CreateSessions extends Command
 
     public function handle()
     {
-        $now = Carbon::now();
-
         Session::query()
-            ->where('day_id', $now->dayOfWeek + 1)
+            ->where('day_id', Carbon::now()->dayOfWeek + 1)
             ->get()
-            ->each(static function (Session $session) use ($now) {
-                $newDate = $now->addWeeks($session->advance_weeks_to_create);
+            ->each(static function (Session $session) {
+                $now = Carbon::now();
+
+                $newDate = $now->addWeeks($session->advance_weeks_to_create + 1);
 
                 if ($session->groupSessions()->where('date', $newDate)->exists()) {
                     return;
