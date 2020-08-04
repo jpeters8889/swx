@@ -23,7 +23,7 @@
         }),
 
         mounted() {
-            window.Architect.request().get(`/external/groups/members/${this.groupSessionId}`).then((response) => {
+            Architect.request().get(`/external/groups/members/${this.groupSessionId}`).then((response) => {
                 this.members = response.data;
             })
         }

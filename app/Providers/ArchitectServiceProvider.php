@@ -14,7 +14,7 @@ class ArchitectServiceProvider extends ArchitectApplicationServiceProvider
         parent::boot();
     }
 
-    protected function blueprints()
+    protected function blueprints(): array
     {
         return [
             GroupBlueprint::class,

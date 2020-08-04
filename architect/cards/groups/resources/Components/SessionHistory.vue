@@ -2,7 +2,7 @@
     <div v-if="loaded">
         <div>
             <h2 class="text-xl font-semibold text-center mb-2">
-                {{ groupName }}, {{ session.day.day }}, {{ session.human_start_time }} - {{ session.human_end_time}}
+                {{ groupName }}, {{ session.day.day }}, {{ session.human_start_time }} - {{ session.human_end_time }}
             </h2>
 
             <table class="w-full">
@@ -17,7 +17,7 @@
                     :class="group.type === 'past' ? 'bg-red-500' : group.type === 'future' ? 'bg-green-500' : ''">
                     <td class="p-2 border-r border-blue-500">{{ formatDate(group.date) }}</td>
                     <td class="p-2 text-right" @click="viewMemberList(group.id, group.members_count)">
-                        {{ group.members_count }}/{{ session.capacity}}
+                        {{ group.members_count }}/{{ session.capacity }}
                     </td>
                 </tr>
                 </tbody>
@@ -25,7 +25,7 @@
         </div>
 
         <portal to="secondary-modal" v-if="showMembers">
-            <modal>
+            <modal title="Member List" id="inner-member-list">
                 <div class="w-full bg-gray-100 p-2">
                     <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
                          @click="showMembers = false">
@@ -45,46 +45,52 @@
 </template>
 
 <script>
-    export default {
-        props: {
-            groupName: {
-                type: String,
-                required: true,
-            },
-            sessionId: {
-                type: Number,
-                required: true,
-            }
+export default {
+    props: {
+        groupName: {
+            type: String,
+            required: true,
         },
-
-        data: () => ({
-            loaded: false,
-            session: {},
-
-            showMembers: false,
-            groupSessionId: 0,
-        }),
-
-        mounted() {
-            window.Architect.request().get(`/external/groups/session/${this.sessionId}`).then((response) => {
-                this.session = response.data;
-                this.loaded = true;
-            });
-        },
-
-        methods: {
-            formatDate(date, format = 'Do MMMM YYYY') {
-                return moment(date).format(format);
-            },
-
-            viewMemberList(groupSessionId, count) {
-                if (count === 0) {
-                    return;
-                }
-
-                this.groupSessionId = groupSessionId;
-                this.showMembers = true;
-            },
+        sessionId: {
+            type: Number,
+            required: true,
         }
+    },
+
+    data: () => ({
+        loaded: false,
+        session: {},
+
+        showMembers: false,
+        groupSessionId: 0,
+    }),
+
+    mounted() {
+        Architect.$on('modal-close', (modal) => {
+            if (modal.id === 'inner-member-list') {
+                this.showMembers = false;
+            }
+        })
+
+        Architect.request().get(`/external/groups/session/${this.sessionId}`).then((response) => {
+            this.session = response.data;
+            this.loaded = true;
+        });
+    },
+
+    methods: {
+        formatDate(date, format = 'Do MMMM YYYY') {
+            return moment(date).format(format);
+        },
+
+        viewMemberList(groupSessionId, count) {
+            if (count === 0) {
+                return;
+            }
+
+            this.groupSessionId = groupSessionId;
+            this.showMembers = true;
+        },
     }
+}
 </script>

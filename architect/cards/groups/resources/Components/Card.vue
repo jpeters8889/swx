@@ -46,13 +46,8 @@
         </div>
 
         <portal to="modal" v-if="showMemberModal">
-            <modal>
+            <modal title="Member List" id="member-list">
                 <div class="w-full bg-gray-100 p-2">
-                    <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
-                         @click="showMemberModal = false">
-                        <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
-                    </div>
-
                     <p class="font-semibold text-lg">
                         Member List for {{ viewedName }}, {{ formatDate(viewedSession.date) }} - {{
                             viewedSession.session.human_start_time
@@ -70,7 +65,7 @@
         </portal>
 
         <portal to="modal" v-if="showSessionDetail">
-            <modal>
+            <modal title="Session History" id="session-history">
                 <div class="w-full bg-gray-100 p-2">
                     <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
                          @click="showSessionDetail = false">
@@ -89,6 +84,7 @@ import SessionHistory from "./SessionHistory";
 
 export default {
     components: {SessionHistory},
+
     props: {
         data: Object | Array,
         labels: Object | Array,
@@ -106,7 +102,17 @@ export default {
     }),
 
     mounted() {
-        window.Architect.request().get('/external/groups/list').then((response) => {
+        Architect.$on('modal-close', (modal) => {
+            if (modal.id === 'member-list') {
+                this.showMemberModal = false;
+            }
+
+            if (modal.id === 'session-history') {
+                this.showSessionDetail = false;
+            }
+        });
+
+        Architect.request().get('/external/groups/list').then((response) => {
             this.groups = response.data;
 
             this.groups.map((group) => {

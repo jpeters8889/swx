@@ -14,7 +14,7 @@ class GroupBlueprint extends Blueprint
         return Group::class;
     }
 
-    public function card()
+    public function card(): string
     {
         return Card::class;
     }
@@ -39,7 +39,7 @@ class GroupBlueprint extends Blueprint
         return false;
     }
 
-    public function blueprintName()
+    public function blueprintName(): string
     {
         return 'Your Groups';
     }
