@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center"
+        <div v-if="isBookable" class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center"
              :class="backgroundClass" @click="openModal">
             <span class="mb-1"><slot></slot></span>
             <span class="text-xs text-center" v-html="tooltip"></span>
@@ -102,7 +102,11 @@
                 required: true,
             },
             now: {
-                type: String,
+                type: Number,
+                required: true,
+            },
+            sessionStartAt: {
+                type: Number,
                 required: true,
             },
             groupStartAt: {
@@ -198,6 +202,18 @@
         },
 
         computed: {
+            isBookable: function () {
+                if(this.today !== this.groupDate) {
+                    return true;
+                }
+                
+                if(this.sessionStartAt > this.now) {
+                    return true
+                }
+                
+                return false;
+            },
+        
             backgroundClass: function () {
                 if (this.currentCount === this.capacity) {
                     return ['bg-sw-red', 'hover:bg-sw-red-80'];
