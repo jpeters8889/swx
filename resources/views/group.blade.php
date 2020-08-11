@@ -94,12 +94,12 @@
                     @foreach($date as $groupSession)
                         <book-session
                             today="{{ $today }}"
-                            now="{{ $now }}"
+                            :now="{{ $now }}"
                             :group-session-id="{{ $groupSession->id }}"
                             group-slug="{{ $group->slug }}"
                             group-name="{{ $group->name }}"
                             group-date="{{ $date[0]->date->format('jS M') }}"
-                            session-start="{{ Carbon\Carbon::parse($groupSession->session->start_at)->format('Gi') }}"
+                            :session-start="{{ Carbon\Carbon::parse($groupSession->session->start_at)->format('Gi') }}"
                             :new-member="{{ $groupSession->session->new_member_session ? 'true' : 'false' }}"
                             :capacity="{{ $groupSession->session->capacity }}"
                             :capacity-threshold="{{ $groupSession->session->capacity_threshold }}"
