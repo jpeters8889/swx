@@ -211,7 +211,10 @@
                     return true
                 }
                 
-                return false;
+                console.log(this.sessionStartAt);
+                console.log(this.now);
+                
+                return true;
             },
         
             backgroundClass: function () {
