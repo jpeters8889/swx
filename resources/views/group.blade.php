@@ -94,7 +94,7 @@
                     @foreach($date as $groupSession)
                         <book-session
                             today="{{ $today }}"
-                            expire="{{ $expire }}"
+                            now="{{ $now }}"
                             :group-session-id="{{ $groupSession->id }}"
                             group-slug="{{ $group->slug }}"
                             group-name="{{ $group->name }}"
