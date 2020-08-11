@@ -94,11 +94,12 @@
                     @foreach($date as $groupSession)
                         <book-session
                             today="{{ $today }}"
-                            now="{{ $now }}"
+                            expire="{{ $expire }}"
                             :group-session-id="{{ $groupSession->id }}"
                             group-slug="{{ $group->slug }}"
                             group-name="{{ $group->name }}"
                             group-date="{{ $date[0]->date->format('jS M') }}"
+                            session-start="{{ $groupSession->session->start_at }}"
                             :new-member="{{ $groupSession->session->new_member_session ? 'true' : 'false' }}"
                             :capacity="{{ $groupSession->session->capacity }}"
                             :capacity-threshold="{{ $groupSession->session->capacity_threshold }}"
