@@ -99,7 +99,7 @@
                             group-slug="{{ $group->slug }}"
                             group-name="{{ $group->name }}"
                             group-date="{{ $date[0]->date->format('jS M') }}"
-                            session-start="{{ Carbon\Carbon::parse($groupSession->session->start_at)->format('u') }}"
+                            session-start="{{ Carbon\Carbon::parse($groupSession->date . ' ' . $groupSession->session->start_at)->format('u') }}"
                             :new-member="{{ $groupSession->session->new_member_session ? 'true' : 'false' }}"
                             :capacity="{{ $groupSession->session->capacity }}"
                             :capacity-threshold="{{ $groupSession->session->capacity_threshold }}"
