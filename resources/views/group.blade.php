@@ -91,7 +91,7 @@
                 </div>
 
                 <div class="flex flex-wrap m-1 leading-none">
-                    @foreach($date as $groupSession)
+                    @forelse($date as $groupSession)
                         <book-session
                             today="{{ $today }}"
                             :now="{{ $now }}"
@@ -107,7 +107,9 @@
                         >
                             {{ $groupSession->session->human_start_time }}
                         </book-session>
-                    @endforeach
+                    @empty
+                        No sessions available on this day...
+                    @endforelse
                 </div>
             </div>
         @endforeach
