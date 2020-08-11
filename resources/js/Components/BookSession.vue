@@ -97,6 +97,18 @@
 <script>
     export default {
         props: {
+            today: {
+                type: String,
+                required: true,
+            },
+            now: {
+                type: String,
+                required: true,
+            },
+            groupStartAt: {
+                type: String,
+                required: true,
+            },
             groupSessionId: {
                 type: Number,
                 required: true,
