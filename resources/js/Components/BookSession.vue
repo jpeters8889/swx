@@ -105,7 +105,7 @@
                 type: Number,
                 required: true,
             },
-            sessionStartAt: {
+            sessionStart: {
                 type: Number,
                 required: true,
             },
@@ -207,14 +207,11 @@
                     return true;
                 }
                 
-                if(this.sessionStartAt > this.now) {
+                if(this.sessionStart > this.now) {
                     return true
                 }
                 
-                console.log(this.sessionStartAt);
-                console.log(this.now);
-                
-                return true;
+                return false;
             },
         
             backgroundClass: function () {
