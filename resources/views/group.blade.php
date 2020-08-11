@@ -93,6 +93,8 @@
                 <div class="flex flex-wrap m-1 leading-none">
                     @foreach($date as $groupSession)
                         <book-session
+                            today="{{ $today }}"
+                            now="{{ $now }}"
                             :group-session-id="{{ $groupSession->id }}"
                             group-slug="{{ $group->slug }}"
                             group-name="{{ $group->name }}"
