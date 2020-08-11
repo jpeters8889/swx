@@ -20,6 +20,8 @@ class GroupController extends Controller
         abort_if(!$group, 404, 'Group not found');
 
         return $page->render('group', [
+            'today' => Carbon::now()->format('jS M'),
+            'now' => Carbon::now()->format('H:i'),
             'group' => $group,
             'dates' => $group->groupSessions()
                 ->orderBy('date')
