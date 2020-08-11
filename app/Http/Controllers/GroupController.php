@@ -21,7 +21,7 @@ class GroupController extends Controller
 
         return $page->render('group', [
             'today' => Carbon::now()->format('jS M'),
-            'now' => Carbon::now()->setTimezone('Europe/London')->format('hI'),
+            'now' => Carbon::now()->setTimezone('Europe/London')->format('Gi'),
             'group' => $group,
             'dates' => $group->groupSessions()
                 ->orderBy('date')
