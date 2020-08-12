@@ -130,9 +130,47 @@ class MemberBookTest extends TestCase
             ]);
     }
 
-    protected function makeRequest($name = null, $email = null, $phone = null)
+    /** @test */
+    public function it_errors_when_a_member_is_already_booked_onto_a_session_on_the_same_day()
     {
-        return $this->post("/{$this->group->slug}/1", [
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '19:00']);
+
+        GroupSession::query()->create([
+            'group_id' => 1,
+            'session_id' => 2,
+            'date' => Carbon::today(),
+        ]);
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456');
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456', 2)
+            ->assertStatus(409)
+            ->assertJson([
+                'errors' => [
+                    'sameday' => 'Member already booked onto a session on this day'
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function it_allows_a_member_to_book_onto_sessions_the_next_week()
+    {
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '19:00']);
+
+        GroupSession::query()->create([
+            'group_id' => 1,
+            'session_id' => 2,
+            'date' => Carbon::today()->addWeek(),
+        ]);
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456')->assertStatus(200);
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456', 2)->assertStatus(200);
+    }
+
+    protected function makeRequest($name = null, $email = null, $phone = null, $sessionId = 1)
+    {
+        return $this->post("/{$this->group->slug}/{$sessionId}", [
             'name' => $name ?? $this->faker->name,
             'email' => $email ?? $this->faker->email,
             'phone' => $phone ?? $this->faker->phoneNumber,

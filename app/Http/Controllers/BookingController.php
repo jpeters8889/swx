@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Events\MemberBookedOntoSession;
 use App\Exceptions\MemberAlreadyOnSessionException;
+use App\Exceptions\MemberSameDayBookingException;
 use App\Exceptions\SessionFullException;
 use App\Http\Requests\BookingRequest;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -25,6 +26,8 @@ class BookingController extends Controller
             return new Response();
         } catch (MemberAlreadyOnSessionException $e) {
             return new Response(['errors' => ['conflict' => $e->getMessage()]], 409);
+        } catch (MemberSameDayBookingException $e) {
+            return new Response(['errors' => ['sameday' => $e->getMessage()]], 409);
         } catch (SessionFullException $e) {
             return new Response(['errors' => ['sessionFull' => $e->getMessage()]], 422);
         }

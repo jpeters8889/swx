@@ -21,7 +21,7 @@
                                 Please enter your name and phone number below to register for this session.
                         </p>
 
-                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="failed && !errors.sessionFull && !errors.conflict">
+                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="failed && !errors.sessionFull && !errors.conflict && !errors.sameday">
                             Sorry, there was a problem booking you onto this session, please try again or select another
                             session...
                         </p>
@@ -32,6 +32,10 @@
 
                         <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="errors.conflict">
                             Sorry, you're already booked on this session!
+                        </p>
+
+                        <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="errors.sameday">
+                            Sorry, you're already booked onto a session on the same day as this one!
                         </p>
 
                         <div class="my-3">
@@ -109,10 +113,6 @@
                 type: Number,
                 required: true,
             },
-            groupStartAt: {
-                type: String,
-                required: true,
-            },
             groupSessionId: {
                 type: Number,
                 required: true,
@@ -157,6 +157,7 @@
             errors: {
                 sessionFull: false,
                 conflict: false,
+                sameday: false,
                 name: false,
                 email: false,
                 phone: false,
@@ -206,14 +207,14 @@
                 if(this.today !== this.groupDate) {
                     return true;
                 }
-                
+
                 if(this.sessionStart > this.now) {
                     return true
                 }
-                
+
                 return false;
             },
-        
+
             backgroundClass: function () {
                 if (this.currentCount === this.capacity) {
                     return ['bg-sw-red', 'hover:bg-sw-red-80'];

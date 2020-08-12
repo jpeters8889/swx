@@ -32,8 +32,8 @@ class GroupPageTest extends TestCase
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 2, 'start_at' => '09:30']);
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 2, 'start_at' => '10:30']);
 
-        $sessionOneStart = Carbon::parse('2020-08-01');
-        $sessionTwoStart = Carbon::parse('2020-08-04');
+        $sessionOneStart = Carbon::today();
+        $sessionTwoStart = Carbon::today()->addDays(3);
 
         for($x = 0; $x < 3; $x++) {
             GroupSession::query()->create([
@@ -84,8 +84,8 @@ class GroupPageTest extends TestCase
     {
         $request = $this->makeRequest();
 
-        $sessionOneStart = Carbon::parse('2020-08-01');
-        $sessionTwoStart = Carbon::parse('2020-08-04');
+        $sessionOneStart = Carbon::today();
+        $sessionTwoStart = Carbon::today()->addDays(3);
 
         for($x = 0; $x < 3; $x++) {
             $request->assertSee($sessionOneStart->addWeek()->format('l jS F'));

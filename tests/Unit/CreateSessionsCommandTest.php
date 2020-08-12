@@ -41,19 +41,25 @@ class CreateSessionsCommandTest extends TestCase
         $this->artisan('sw:create-sessions');
         $this->session->refresh();
 
-        // At this point there should be still 3 because it wont have created any new ones
-        $this->assertCount(3, $this->session->groupSessions);
+        // At this point there should be still 4 because it will have created one for the following week
+        $this->assertCount(4, $this->session->groupSessions);
 
-        // If we fast forward a week, then it should create another group session in 2 weeks
-        TestTime::addWeek();
-
+        // If we run it again without advancing a week it shouldn't have added any more
         $this->artisan('sw:create-sessions');
         $this->session->refresh();
 
         $this->assertCount(4, $this->session->groupSessions);
 
+        // If we fast forward a week, then it should create another group session in 3 weeks
+        TestTime::addWeek();
+
+        $this->artisan('sw:create-sessions');
+        $this->session->refresh();
+
+        $this->assertCount(5, $this->session->groupSessions);
+
         $newestSession = $this->session->groupSessions()->latest()->first();
 
-        $this->assertTrue(Carbon::now()->addWeeks(2)->isSameDay($newestSession->date));
+        $this->assertTrue(Carbon::now()->addWeeks(3)->isSameDay($newestSession->date));
     }
 }
