@@ -8,8 +8,8 @@ use App\Models\GroupSession;
 use App\Models\Member;
 use App\Models\Session;
 use App\Models\User;
-use App\Notifications\BookingConfirmed;
-use App\Notifications\SessionNearingCapacity;
+use App\Notifications\BookingConfirmedNotification;
+use App\Notifications\SessionNearingCapacityNotification;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
@@ -44,7 +44,7 @@ class SessionAlmostFullNotificationTest extends TestCase
     /** @test */
     public function it_doesnt_send_notifications_when_the_limit_isnt_met()
     {
-        Notification::assertNotSentTo(User::query()->first(), SessionNearingCapacity::class);
+        Notification::assertNotSentTo(User::query()->first(), SessionNearingCapacityNotification::class);
     }
 
     /**
@@ -65,7 +65,7 @@ class SessionAlmostFullNotificationTest extends TestCase
 
         Notification::assertSentTo(
             User::query()->first(),
-            SessionNearingCapacity::class,
+            SessionNearingCapacityNotification::class,
             $callback
         );
     }
@@ -76,37 +76,37 @@ class SessionAlmostFullNotificationTest extends TestCase
             [null],
 
             // Group Session
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 return $notification->groupSession->is(GroupSession::query()->first());
             }],
 
             // To
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 return $user->is(Group::query()->first()->user);
             }],
 
             // Mail Channel
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 return $channels === ['mail'];
             }],
 
             // From Name
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 return $notification->toMail($user)->from[1] === $notification->groupSession->group->name;
             }],
 
             // Subject Line
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 return $notification->toMail($user)->subject === 'Session Nearing Capacity Limit';
             }],
 
             // Greeting Line
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 return $notification->toMail($user)->greeting === 'Session Nearing Capacity Limit';
             }],
 
             // Message Content
-            [static function (SessionNearingCapacity $notification, array $channels, User $user) {
+            [static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
                 /** @var GroupSession $groupSession */
                 $groupSession = GroupSession::query()->first();
                 $message = $notification->toMail($user)->introLines;
@@ -153,7 +153,7 @@ class SessionAlmostFullNotificationTest extends TestCase
         // So we should have one notification
         Notification::assertSentToTimes(
             User::query()->first(),
-            SessionNearingCapacity::class,
+            SessionNearingCapacityNotification::class,
             1
         );
     }

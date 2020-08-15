@@ -3,12 +3,12 @@
 namespace App\Listeners;
 
 use App\Events\MemberBookedOntoSession;
-use App\Notifications\BookingConfirmed;
+use App\Notifications\BookingConfirmedNotification;
 
 class SendBookingConfirmation
 {
     public function handle(MemberBookedOntoSession $event)
     {
-        $event->member()->notify(new BookingConfirmed());
+        $event->member()->notify(new BookingConfirmedNotification());
     }
 }

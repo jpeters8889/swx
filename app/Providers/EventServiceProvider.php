@@ -3,10 +3,14 @@
 namespace App\Providers;
 
 use App\Events\MemberBookedOntoSession;
+use App\Events\MemberBookingCancelled;
+use App\Events\MemberLookupCreated;
 use App\Events\SessionCreated;
+use App\Listeners\BookingCancelled;
 use App\Listeners\CheckSessionCapacities;
 use App\Listeners\CreateInitialGroupSessions;
 use App\Listeners\SendBookingConfirmation;
+use App\Listeners\SendMemberLookupNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
 class EventServiceProvider extends ServiceProvider
@@ -22,8 +26,16 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         MemberBookedOntoSession::class => [
-          SendBookingConfirmation::class,
+            SendBookingConfirmation::class,
             CheckSessionCapacities::class,
+        ],
+
+        MemberLookupCreated::class => [
+            SendMemberLookupNotification::class,
+        ],
+
+        MemberBookingCancelled::class => [
+            BookingCancelled::class,
         ],
     ];
 
@@ -35,7 +47,5 @@ class EventServiceProvider extends ServiceProvider
     public function boot()
     {
         parent::boot();
-
-        //
     }
 }

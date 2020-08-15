@@ -8,7 +8,7 @@ use App\Models\GroupSession;
 use App\Models\Member;
 use App\Models\Session;
 use App\Models\User;
-use App\Notifications\BookingConfirmed;
+use App\Notifications\BookingConfirmedNotification;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Arr;
@@ -52,7 +52,7 @@ class BookingConfirmedNotificationTest extends TestCase
     {
         Notification::assertSentTo(
             Member::query()->first(),
-            BookingConfirmed::class,
+            BookingConfirmedNotification::class,
             $callback
         );
     }
@@ -64,32 +64,32 @@ class BookingConfirmedNotificationTest extends TestCase
             [null],
 
             // Mail Channel
-            [static function (BookingConfirmed $notification, array $channels, Member $member) {
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
                 return $channels === ['mail'];
             }],
 
             // From Name
-            [static function (BookingConfirmed $notification, array $channels, Member $member) {
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
                 return $notification->toMail($member)->from[1] === $member->groupSession->group->name;
             }],
 
             // Notification Level
-            [static function (BookingConfirmed $notification, array $channels, Member $member) {
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
                 return $notification->toMail($member)->level === 'success';
             }],
 
             // Subject Line
-            [static function (BookingConfirmed $notification, array $channels, Member $member) {
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
                 return $notification->toMail($member)->subject === 'Slimming World Booking Confirmed!';
             }],
 
             // Greeting Line
-            [static function (BookingConfirmed $notification, array $channels, Member $member) {
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
                 return $notification->toMail($member)->greeting === 'Booking Confirmed!';
             }],
 
             // Message Content
-            [static function (BookingConfirmed $notification, array $channels, Member $member) {
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
                 $message = $notification->toMail($member)->introLines;
 
                 $assertions = [

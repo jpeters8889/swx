@@ -20,6 +20,7 @@ const colours = {
     black: {
         default: '#000',
         '80': 'rgba(0,0,0,0.8)',
+        '50': 'rgba(0,0,0,0.5)',
     },
 
     grey: {
