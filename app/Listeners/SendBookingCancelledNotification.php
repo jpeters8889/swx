@@ -5,7 +5,7 @@ namespace App\Listeners;
 use App\Events\MemberBookingCancelled;
 use App\Notifications\BookingCancelledNotification;
 
-class BookingCancelled
+class SendBookingCancelledNotification
 {
     public function handle(MemberBookingCancelled $event)
     {

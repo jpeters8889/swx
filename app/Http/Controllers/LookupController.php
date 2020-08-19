@@ -11,18 +11,15 @@ use App\Events\MemberLookupCreated;
 use Carbon\Carbon;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use JPeters\PageViewBuilder\Page;
 
 class LookupController extends Controller
 {
     public function create(CreateMemberLookupRequest $request, Dispatcher $dispatcher)
     {
-        if ($request->hasMembers()) {
-            $lookup = MemberLookup::query()->create(['email' => $request->input('email')]);
+        $lookup = MemberLookup::query()->create(['email' => $request->input('email')]);
 
-            $dispatcher->dispatch(new MemberLookupCreated($lookup));
-        }
+        $dispatcher->dispatch(new MemberLookupCreated($lookup));
     }
 
     public function get(Page $page, ViewMemberLookupRequest $request)

@@ -10,6 +10,7 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
 /**
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * @property Session session
  * @property Group group
  * @property Collection<Member> members
+ * @property Collection<MemberCancellation> cancellations
  */
 class GroupSession extends Model
 {
@@ -118,5 +120,17 @@ class GroupSession extends Model
                 return $builder;
             })
             ->exists();
+    }
+
+    public function cancellations(): HasMany
+    {
+        return $this->hasMany(MemberCancellation::class);
+    }
+
+    public function cancelMember($email): void
+    {
+        $this->cancellations()->create([
+            'email' => $email
+        ]);
     }
 }

@@ -30,7 +30,7 @@
                         bring your own too if you like.
                     </li>
                     <li>
-                        Masks are not compulsory in our groups, but feel free to wear one if you prefer.
+                        Masks <strong>must</strong> be worn while in group, unless you are exempt under government guidelines.
                     </li>
                     <li>
                         There will be a one-way system in the venue and queueing outside the seating area.

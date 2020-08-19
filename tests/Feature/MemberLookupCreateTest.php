@@ -26,6 +26,8 @@ class MemberLookupCreateTest extends TestCase
 
         Notification::fake();
         $this->setUpFaker();
+
+
     }
 
     /** @test */
@@ -41,9 +43,21 @@ class MemberLookupCreateTest extends TestCase
     }
 
     /** @test */
-    public function it_returns_ok_with_a_valid_email()
+    public function it_errors_with_an_email_that_doesnt_exist_in_the_database()
     {
-        $this->makeRequest()->assertStatus(200);
+        $this->makeRequest('jamie@foo.com')->assertStatus(422);
+    }
+
+    /** @test */
+    public function it_returns_ok_with_a_valid_email_that_exists_in_the_database()
+    {
+        factory(User::class)->create();
+        factory(Group::class,)->create(['user_id' => 1]);
+        factory(Session::class)->create(['group_id' => 1]);
+
+        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk', 'group_session_id' => 1]);
+
+        $this->makeRequest('jamie@jamie-peters.co.uk')->assertStatus(200);
     }
 
     /** @test */

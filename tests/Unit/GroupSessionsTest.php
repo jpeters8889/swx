@@ -8,9 +8,11 @@ use App\Exceptions\SessionFullException;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberCancellation;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -98,5 +100,25 @@ class GroupSessionsTest extends TestCase
         $this->expectExceptionMessage('Member already exists on this session');
 
         $this->groupSession->fresh()->addMember($member);
+    }
+
+    /** @test */
+    public function it_has_cancellations()
+    {
+        $cancellation = factory(MemberCancellation::class)->create(['group_session_id' => 1]);
+
+        $this->assertInstanceOf(Collection::class, $cancellations =$this->groupSession->fresh()->cancellations);
+        $this->assertTrue($cancellation->is($cancellations[0]));
+    }
+
+    /** @test */
+    public function it_members_can_be_cancelled()
+    {
+        $this->assertEmpty($this->groupSession->cancellations);
+
+        $this->groupSession->cancelMember('jamie@jamie-peters.co.uk');
+
+        $this->assertNotEmpty($this->groupSession->fresh()->cancellations);
+        $this->assertEquals('jamie@jamie-peters.co.uk', MemberCancellation::query()->first()->email);
     }
 }

@@ -42,6 +42,7 @@ class ViewBookingsTest extends TestCase
 
         factory(Member::class)->create([
             'email' => 'jamie@jamie-peters.co.uk',
+            'name' => 'Alison Wheatley',
             'group_session_id' => 1
         ]);
 
@@ -78,6 +79,7 @@ class ViewBookingsTest extends TestCase
             ->assertSee('Upcoming Bookings')
             ->assertSee('Test Group')
             ->assertSee('Jamie')
+            ->assertSee('Alison Wheatley')
             ->assertSee(Carbon::tomorrow()->format('D jS M'))
             ->assertSee('11:30am');
     }
@@ -111,6 +113,7 @@ class ViewBookingsTest extends TestCase
             ->assertSee('Previous Bookings')
             ->assertSee('Test Group')
             ->assertSee('Jamie')
+            ->assertSee('Alison Wheatley')
             ->assertSee(Carbon::today()->subDay()->format('D jS M'))
             ->assertSee('11:30am');
     }

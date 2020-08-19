@@ -39,33 +39,33 @@
 
                 <div class="my-3">
                     <input type="text" v-model="fields.name" placeholder="Your name..."
-                           class="border border-grey p-2 rounded w-98"/>
+                           class="border border-grey p-2 rounded w-98" @keyup.enter="submitBooking()"/>
 
                     <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.name">
-                                Please enter your name.
-                            </span>
+                        Please enter your name.
+                    </span>
                 </div>
 
                 <div class="my-3">
                     <input type="email" v-model="fields.email" placeholder="Your email address..."
-                           class="border border-grey p-2 rounded w-98"/>
+                           class="border border-grey p-2 rounded w-98" @keyup.enter="submitBooking()"/>
 
                     <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.email">
-                                Please enter your email.
-                            </span>
+                        Please enter your email.
+                    </span>
 
                     <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.validEmail">
-                                Please enter a valid email address.
-                            </span>
+                        Please enter a valid email address.
+                    </span>
                 </div>
 
                 <div class="my-3">
                     <input v-model="fields.phone" type="tel" placeholder="Your phone number..."
-                           class="border border-grey p-2 rounded w-98"/>
+                           class="border border-grey p-2 rounded w-98" @keyup.enter="submitBooking()"/>
 
                     <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.phone">
-                                Please enter your phone number.
-                            </span>
+                        Please enter your phone number.
+                    </span>
                 </div>
 
                 <p class="mb-3">

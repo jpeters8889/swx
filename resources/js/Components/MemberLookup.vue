@@ -1,6 +1,7 @@
 <template>
     <div>
-        <div class="p-4 flex flex-col text-white font-semibold text-center sm:items-center cursor-pointer" @click="viewModal = true">
+        <div class="p-4 flex flex-col text-white font-semibold text-center sm:items-center cursor-pointer"
+             @click="viewModal = true">
             Click here to view and manage your previous bookings.
         </div>
 
@@ -11,25 +12,34 @@
                     to view your bookings.
                 </p>
 
+                <p class="mt-2">
+                    Please note, your email address must exactly match the one used when booking onto a session to view
+                    your previous bookings.
+                </p>
+
                 <div class="my-3">
                     <input type="email" v-model="email" placeholder="Your email address..."
-                           class="border border-grey p-2 rounded w-98"/>
+                           class="border border-grey p-2 rounded w-full" @keyup.enter="submitLookup()"/>
 
                     <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.email">
-                                Please enter your email.
-                            </span>
+                        Please enter your email.
+                    </span>
 
                     <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.validEmail">
-                                Please enter a valid email address.
-                            </span>
+                        Please enter a valid email address.
+                    </span>
+
+                    <span class="text-sw-red font-semibold mt-1 text-sm" v-if="errors.emailExists">
+                        Sorry, we can't find any bookings with that email address.
+                    </span>
                 </div>
 
                 <div class="flex justify-between leading-none text-xl">
-                    <a class="bg-sw-red rounded p-2 text-semibold text-white" @click="close()">
+                    <a class="bg-sw-red rounded p-2 text-semibold text-white cursor-pointer" @click="close()">
                         Cancel
                     </a>
 
-                    <button class="bg-sw-green rounded p-2 text-semibold text-white" @click.prevent="submitLookup()">
+                    <button class="bg-sw-green rounded p-2 text-semibold text-white cursor-pointer" @click.prevent="submitLookup()">
                         Submit
                     </button>
                 </div>
@@ -39,7 +49,7 @@
                 <p>Thanks, please check your email to manage your bookings.</p>
 
                 <div class="flex justify-center leading-none text-xl">
-                    <a class="bg-sw-green rounded p-2 text-semibold text-white" @click="close()">
+                    <a class="bg-sw-green rounded p-2 text-semibold text-white cursor-pointer" @click="close()">
                         Close
                     </a>
                 </div>
@@ -69,6 +79,7 @@ export default {
         errors: {
             email: false,
             validEmail: false,
+            emailExists: false,
         }
     }),
 
@@ -103,6 +114,11 @@ export default {
                 if (response.data.errors.email && response.data.errors.email[0] === 'validation.email') {
                     this.errors.email = false;
                     this.errors.validEmail = true;
+                }
+
+                if (response.data.errors.email && response.data.errors.email[0] === 'validation.exists') {
+                    this.errors.email = false;
+                    this.errors.emailExists = true;
                 }
 
                 this.failed = true;

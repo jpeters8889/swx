@@ -19,19 +19,25 @@
                 </h2>
             </div>
 
-            <div class="p-2 pb-0">
+            <div>
                 <ul>
                     @forelse($upcoming as $booking)
-                        <li class="flex pb-2">
-                            <div class="flex-1 flex flex-col">
-                                <strong class="font-semibold">
-                                    {{ $booking->groupSession->group->name }}
-                                    with {{ $booking->groupSession->group->user->first_name }}
-                                </strong>
-                                {{ $booking->groupSession->date->format('D jS M') }},
-                                {{ $booking->groupSession->session->human_start_time }}
+                        <li class="flex border-b border-sw-red">
+                            <div class="flex-1 flex flex-col p-2">
+                                <div class="mb-2 flex flex-col">
+                                    <strong class="font-semibold">
+                                        {{ $booking->groupSession->group->name }}
+                                        with {{ $booking->groupSession->group->user->first_name }}
+                                    </strong>
+                                    {{ $booking->groupSession->date->format('D jS M') }},
+                                    {{ $booking->groupSession->session->human_start_time }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <strong class="font-semibold">Booked Member Name</strong>
+                                    {{ $booking->name }}
+                                </div>
                             </div>
-                            <div>
+                            <div class="p-2">
                                 <cancel-session :id="{{ $booking->id }}" token="{{ $key }}"></cancel-session>
                             </div>
                         </li>
@@ -49,17 +55,21 @@
                 </h2>
             </div>
 
-            <div class="p-2 pb-0">
+            <div>
                 <ul>
                     @forelse($past as $booking)
-                        <li class="flex pb-2">
-                            <div class="flex-1 flex flex-col">
+                        <li class="flex border-b border-sw-red">
+                            <div class="mb-2 flex flex-col p-2">
                                 <strong class="font-semibold">
                                     {{ $booking->groupSession->group->name }}
                                     with {{ $booking->groupSession->group->user->first_name }}
                                 </strong>
                                 {{ $booking->groupSession->date->format('D jS M') }},
                                 {{ $booking->groupSession->session->human_start_time }}
+                            </div>
+                            <div class="flex flex-col">
+                                <strong class="font-semibold">Booked Member Name</strong>
+                                {{ $booking->name }}
                             </div>
                         </li>
                     @empty

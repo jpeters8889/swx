@@ -6,7 +6,8 @@ use App\Events\MemberBookedOntoSession;
 use App\Events\MemberBookingCancelled;
 use App\Events\MemberLookupCreated;
 use App\Events\SessionCreated;
-use App\Listeners\BookingCancelled;
+use App\Listeners\LogMemberCancellation;
+use App\Listeners\SendBookingCancelledNotification;
 use App\Listeners\CheckSessionCapacities;
 use App\Listeners\CreateInitialGroupSessions;
 use App\Listeners\SendBookingConfirmation;
@@ -35,7 +36,8 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         MemberBookingCancelled::class => [
-            BookingCancelled::class,
+            SendBookingCancelledNotification::class,
+            LogMemberCancellation::class,
         ],
     ];
 

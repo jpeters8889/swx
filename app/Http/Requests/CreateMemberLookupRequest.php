@@ -9,15 +9,10 @@ use Illuminate\Http\Exceptions\HttpResponseException;
 
 class CreateMemberLookupRequest extends FormRequest
 {
-    public function hasMembers(): bool
-    {
-        return Member::query()->where('email', $this->input('email'))->exists();
-    }
-
     public function rules(): array
     {
         return [
-            'email' => ['required', 'email'],
+            'email' => ['required', 'email', 'exists:members'],
         ];
     }
 
