@@ -9,6 +9,6 @@ class SendMemberLookupNotification
 {
     public function handle(MemberLookupCreated $event)
     {
-        $event->lookup()->notify(new MemberLookupNotification());
+        $event->lookup()->member->notify(new MemberLookupNotification($event->lookup()));
     }
 }

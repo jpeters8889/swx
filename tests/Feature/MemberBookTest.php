@@ -6,6 +6,7 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
@@ -74,7 +75,7 @@ class MemberBookTest extends TestCase
     /** @test */
     public function it_errors_if_the_session_is_full()
     {
-        factory(Member::class)->create(['group_session_id' => 1]);
+        MemberBooking::query()->create(['member_id' => factory(Member::class)->create(), 'group_session_id' => 1]);
         Session::query()->first()->update(['capacity' => 1]);
 
         $this->makeRequest()->assertStatus(422);
@@ -89,7 +90,7 @@ class MemberBookTest extends TestCase
 
         $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456');
 
-        $this->assertNotEmpty($groupSession->fresh()->members);
+        $this->assertNotEmpty($groupSession->fresh()->bookings);
 
         $this->assertEquals('Jamie', Member::query()->first()->name);
         $this->assertEquals('jamie@jamie-peters.co.uk', Member::query()->first()->email);
@@ -97,9 +98,24 @@ class MemberBookTest extends TestCase
     }
 
     /** @test */
+    public function it_uses_an_already_created_member_when_the_data_matches()
+    {
+        factory(Member::class)->create([
+            'name' => 'Jamie',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+        ]);
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456');
+
+        $this->assertCount(1, Member::all());
+        $this->assertEquals(1, MemberBooking::first()->member_id);
+    }
+
+    /** @test */
     public function it_stores_the_member_id_in_the_session()
     {
-        $this->makeRequest()->assertSessionHas('booking_id', Member::query()->first()->id);
+        $this->makeRequest()->assertSessionHas('booking_id', MemberBooking::query()->first()->id);
     }
 
     /** @test */

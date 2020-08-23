@@ -7,6 +7,7 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\MemberLookup;
 use App\Models\Session;
 use App\Models\User;
@@ -42,11 +43,12 @@ class CancelBookingTest extends TestCase
 
         factory(Member::class)->create([
             'email' => 'jamie@jamie-peters.co.uk',
-            'group_session_id' => 1
         ]);
 
+        MemberBooking::query()->create(['member_id' => 1, 'group_session_id' => 1]);
+
         $this->lookup = MemberLookup::query()->create([
-            'email' => 'jamie@jamie-peters.co.uk'
+            'member_id' => 1
         ]);
     }
 
@@ -81,20 +83,21 @@ class CancelBookingTest extends TestCase
     {
         factory(Member::class)->create([
             'email' => 'foo@bar.com',
-            'group_session_id' => 1
         ]);
+
+        MemberBooking::query()->create(['member_id' => 2, 'group_session_id' => 1]);
 
         $this->delete('/lookup/' . $this->lookup->key . '/2')->assertStatus(404);
     }
 
     /** @test */
-    public function it_deletes_the_member()
+    public function it_deletes_the_booking()
     {
-        $this->assertNotEmpty(Member::all());
+        $this->assertNotEmpty($this->lookup->member->bookings);
 
         $this->delete('/lookup/' . $this->lookup->key . '/1');
 
-        $this->assertEmpty(Member::all());
+        $this->assertEmpty($this->lookup->member->fresh()->bookings);
     }
 
     /** @test */

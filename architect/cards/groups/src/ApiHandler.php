@@ -4,6 +4,7 @@ namespace App\Architect\Cards\Groups;
 
 use App\Models\Group;
 use App\Models\GroupSession;
+use App\Models\MemberBooking;
 use App\Models\Session;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -21,7 +22,7 @@ class ApiHandler
                 'sessions' => fn(Relation $relation) => $relation->orderBy('day_id')->orderBy('start_at'),
                 'sessions.day',
                 'groupSessions' => fn(Relation $relation) => $relation
-                    ->withCount('members')
+                    ->withCount('bookings')
                     ->where('date', '>=', Carbon::today())
                     ->orderBy('date'),
                 'groupSessions.session',
@@ -31,7 +32,7 @@ class ApiHandler
             ->get();
     }
 
-    public function members(Request $request, $id)
+    public function bookings(Request $request, $id)
     {
         /** @var GroupSession $group */
         $group = GroupSession::query()->findOrFail($id);
@@ -39,17 +40,22 @@ class ApiHandler
         abort_if($group->group->user_id !== $request->user()->id, 403);
 
         return $group
-            ->members()
-            ->orderBy('name')
-            ->get();
+            ->bookings
+            ->sortBy(fn(MemberBooking $booking) => ucfirst(explode(' ', $booking->member->name)[0]))
+            ->values();
     }
 
-    public function printMembers(Request $request, $id)
+    public function printBookings(Request $request, $id)
     {
         /** @var GroupSession $groupSession */
         $groupSession = GroupSession::query()->findOrFail($id);
 
         abort_if($groupSession->group->user_id !== $request->user()->id, 403);
+
+        $bookings = $groupSession
+            ->bookings
+            ->sortBy(fn(MemberBooking $booking) => ucfirst(explode(' ', $booking->member->name)[0]))
+            ->values();
 
         $rtr = "<html>
             <body>
@@ -60,20 +66,22 @@ class ApiHandler
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Name</th>
-                    <th>Phone Number</th>
+                    <th style='text-align: left'>Name</th>
+                    <th style='text-align: left'>Email</th>
+                    <th style='text-align: left'>Phone Number</th>
                 </tr>
             </thead>
             <tbody>";
 
-            foreach($groupSession->members()->orderBy('name')->get() as $x => $member) {
-                $index = $x + 1;
-                $rtr .= "<tr>
+        foreach ($bookings as $x => $booking) {
+            $index = $x + 1;
+            $rtr .= "<tr>
                     <td>{$index}</td>
-                    <td>{$member->name}</td>
-                    <td>{$member->phone}</td>
+                    <td>{$booking->member->name}</td>
+                    <td>{$booking->member->email}</td>
+                    <td>{$booking->member->phone}</td>
                 </tr>";
-            }
+        }
 
         $rtr .= "</tbody></table></html>";
 
@@ -86,7 +94,7 @@ class ApiHandler
         $session = Session::query()
             ->with([
                 'day',
-                'groupSessions' => fn(Relation $builder) => $builder->orderByDesc('date')->withCount('members')
+                'groupSessions' => fn(Relation $builder) => $builder->orderByDesc('date')->withCount('bookings')
             ])
             ->findOrFail($id);
 

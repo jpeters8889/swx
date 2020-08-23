@@ -7,6 +7,7 @@ use App\Exceptions\MemberAlreadyOnSessionException;
 use App\Exceptions\MemberSameDayBookingException;
 use App\Exceptions\SessionFullException;
 use App\Http\Requests\BookingRequest;
+use App\Models\Member;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Response;
 use Illuminate\Session\Store;
@@ -18,9 +19,11 @@ class BookingController extends Controller
         $groupSession = $request->groupSession();
 
         try {
-            $member = $groupSession->addMember($request->validated());
+            /** @var Member $member */
+            $member = Member::query()->firstOrCreate($request->validated());
+            $groupSession->bookMember($member);
 
-            $dispatcher->dispatch(new MemberBookedOntoSession($member));
+            $dispatcher->dispatch(new MemberBookedOntoSession($member, $groupSession));
             $sessionStore->put('booking_id', $member->id);
 
             return new Response();

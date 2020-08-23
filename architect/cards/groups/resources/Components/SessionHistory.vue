@@ -16,25 +16,26 @@
                 <tr v-for="group in session.group_sessions" class="border-b-2 border-blue-500"
                     :class="group.type === 'past' ? 'bg-red-500' : group.type === 'future' ? 'bg-green-500' : ''">
                     <td class="p-2 border-r border-blue-500">{{ formatDate(group.date) }}</td>
-                    <td class="p-2 text-right" @click="viewMemberList(group.id, group.members_count)">
-                        {{ group.members_count }}/{{ session.capacity }}
+                    <td class="p-2 text-right" @click="viewMemberList(group.id, group.bookings_count)">
+                        {{ group.bookings_count }}/{{ session.capacity }}
                     </td>
                 </tr>
                 </tbody>
             </table>
         </div>
 
-        <portal to="secondary-modal" v-if="showMembers">
+        <portal to="secondary-modal" v-if="showBookings">
             <modal title="Member List" id="inner-member-list">
                 <div class="w-full bg-gray-100 p-2">
                     <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
-                         @click="showMembers = false">
+                         @click="showBookings = false">
                         <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
                     </div>
 
                     <p>
-                        <a :href="'/admin/api/external/groups/printMembers/'+groupSessionId" target="_blank">Printer
-                            Friendly List</a>
+                        <a :href="'/admin/api/external/groups/printBookings/'+groupSessionId" target="_blank">
+                            Printer Friendly List
+                        </a>
                     </p>
 
                     <groups-member-list :group-session-id="groupSessionId"></groups-member-list>
@@ -61,14 +62,14 @@ export default {
         loaded: false,
         session: {},
 
-        showMembers: false,
+        showBookings: false,
         groupSessionId: 0,
     }),
 
     mounted() {
         Architect.$on('modal-close', (modal) => {
             if (modal.id === 'inner-member-list') {
-                this.showMembers = false;
+                this.showBookings = false;
             }
         })
 
@@ -89,7 +90,7 @@ export default {
             }
 
             this.groupSessionId = groupSessionId;
-            this.showMembers = true;
+            this.showBookings = true;
         },
     }
 }

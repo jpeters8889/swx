@@ -6,6 +6,7 @@ use App\Events\MemberBookingCancelled;
 use App\Http\Requests\CreateMemberLookupRequest;
 use App\Http\Requests\ViewMemberLookupRequest;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\MemberLookup;
 use App\Events\MemberLookupCreated;
 use Carbon\Carbon;
@@ -17,7 +18,7 @@ class LookupController extends Controller
 {
     public function create(CreateMemberLookupRequest $request, Dispatcher $dispatcher)
     {
-        $lookup = MemberLookup::query()->create(['email' => $request->input('email')]);
+        $lookup = MemberLookup::query()->create(['member_id' => $request->member()->id]);
 
         $dispatcher->dispatch(new MemberLookupCreated($lookup));
     }
@@ -27,11 +28,13 @@ class LookupController extends Controller
         return $page->render('lookup', [
             'key' => $request->route('key'),
 
-            'upcoming' => $request->memberLookup()->bookings()
+            'member' => $request->memberLookup()->member,
+
+            'upcoming' => $request->memberLookup()->member->bookings()
                 ->whereHas('groupSession', fn(Builder $builder) => $builder->where('date', '>=', Carbon::today()))
                 ->get(),
 
-            'past' => $request->memberLookup()->bookings()
+            'past' => $request->memberLookup()->member->bookings()
                 ->whereHas('groupSession', fn(Builder $builder) => $builder->where('date', '<', Carbon::today()))
                 ->get(),
         ]);
@@ -40,19 +43,17 @@ class LookupController extends Controller
     public function delete(ViewMemberLookupRequest $request, Dispatcher $dispatcher, $key, $id)
     {
         /** @var Member $member */
-        $member = $request->memberLookup()
-            ->bookings()
-            ->where('id', $id)
-            ->first();
+        $member = $request->memberLookup()->member;
 
-        if (!$member || $member->email !== $request->memberLookup()->email) {
-            abort(404);
-        }
+        /** @var MemberBooking $booking */
+        $booking = $member->bookings()->where('id', $id)->first();
 
-        $member->delete();
+        abort_if(!$member || !$booking, 404);
+
+        $booking->delete();
 
         $dispatcher->dispatch(
-            new MemberBookingCancelled($request->memberLookup(), $member->groupSession)
+            new MemberBookingCancelled($request->memberLookup(), $booking->groupSession)
         );
     }
 }

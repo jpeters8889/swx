@@ -3,18 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MemberCancellation extends Model
+/**
+ * @property GroupSession groupSession
+ */
+class MemberBooking extends Model
 {
     protected $guarded = [];
 
-    public function groupSession(): BelongsTo
+    public function groupSession()
     {
         return $this->belongsTo(GroupSession::class);
     }
 
-    public function member(): BelongsTo
+    public function member()
     {
         return $this->belongsTo(Member::class);
     }

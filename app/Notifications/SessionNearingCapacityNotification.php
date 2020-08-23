@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\Models\GroupSession;
-use App\Models\Member;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -29,7 +28,7 @@ class SessionNearingCapacityNotification extends Notification implements ShouldQ
             ->greeting('Session Nearing Capacity Limit')
             ->line("Your {$this->groupSession->group->name} group on {$this->groupSession->date->format('l jS F Y')}
             at {$this->groupSession->session->human_start_time} is nearing capacity, it currently has
-            {$this->groupSession->members->count()} bookings from a limit of {$this->groupSession->session->capacity} members.");
+            {$this->groupSession->bookings->count()} bookings from a limit of {$this->groupSession->session->capacity} members.");
     }
 
     public function via()

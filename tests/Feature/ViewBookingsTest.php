@@ -6,6 +6,7 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\MemberLookup;
 use App\Models\Session;
 use App\Models\User;
@@ -43,11 +44,12 @@ class ViewBookingsTest extends TestCase
         factory(Member::class)->create([
             'email' => 'jamie@jamie-peters.co.uk',
             'name' => 'Alison Wheatley',
-            'group_session_id' => 1
         ]);
 
+        MemberBooking::query()->create(['member_id' => 1, 'group_session_id' => 1]);
+
         $this->lookup = MemberLookup::query()->create([
-            'email' => 'jamie@jamie-peters.co.uk'
+            'member_id' => 1
         ]);
     }
 

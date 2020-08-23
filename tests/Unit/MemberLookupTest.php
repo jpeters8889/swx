@@ -3,13 +3,16 @@
 namespace Tests\Unit;
 
 use App\Models\Group;
+use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\MemberLookup;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 use Spatie\TestTime\TestTime;
 use Tests\TestCase;
@@ -19,6 +22,7 @@ class MemberLookupTest extends TestCase
     use RefreshDatabase;
     use WithFaker;
 
+    private Member $member;
     private MemberLookup $lookup;
 
     protected function setUp(): void
@@ -28,7 +32,8 @@ class MemberLookupTest extends TestCase
         $this->setUpFaker();
 
         TestTime::freeze();
-        $this->lookup = MemberLookup::query()->create(['email' => $this->faker->email]);
+        $this->member = factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk']);
+        $this->lookup = MemberLookup::query()->create(['member_id' => $this->member->id]);
     }
 
     /** @test */
@@ -82,9 +87,12 @@ class MemberLookupTest extends TestCase
         factory(Group::class, 1)->create(['user_id' => 1]);
         factory(Session::class)->create(['group_id' => 1, 'advance_weeks_to_create' => 2]);
 
-        factory(Member::class)->create(['email' => $this->lookup->email, 'group_session_id' => 1]);
-        factory(Member::class)->create(['email' => $this->lookup->email, 'group_session_id' => 2]);
-        factory(Member::class)->create(['group_session_id' => 1]);
+        $groupSession = GroupSession::query()->find(1);
+        $groupSession2 = GroupSession::query()->find(2);
+
+        $groupSession->bookMember($this->member);
+        $groupSession2->bookMember($this->member);
+        $groupSession->bookMember(factory(Member::class)->create());
 
         $this->assertCount(2, $this->lookup->fresh()->bookings);
     }
@@ -95,9 +103,9 @@ class MemberLookupTest extends TestCase
         $this->assertNotNull($this->lookup->link());
 
         $link = implode('/', [
-           config('app.url'),
-           'lookup',
-           $this->lookup->key,
+            config('app.url'),
+            'lookup',
+            $this->lookup->key,
         ]);
 
         $this->assertEquals($link, $this->lookup->link());

@@ -26,7 +26,7 @@ class GroupController extends Controller
             'dates' => $group->groupSessions()
                 ->orderBy('date')
                 ->with('session')
-                ->withCount('members')
+                ->withCount('bookings')
                 ->where('date', '>=', Carbon::today())
                 ->get()
                 ->groupBy(fn(GroupSession $groupSession) => $groupSession->date->getTimestamp()),

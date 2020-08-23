@@ -6,11 +6,13 @@ use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Container\Container;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
 /**
  * @property Carbon valid_until
+ * @property Member member
  */
 class MemberLookup extends Model
 {
@@ -44,7 +46,7 @@ class MemberLookup extends Model
 
     public function bookings()
     {
-        return $this->hasMany(Member::class, 'email', 'email');
+        return $this->hasManyThrough(MemberBooking::class, Member::class, 'id', 'member_id', 'member_id');
     }
 
     public function hasExpired(): bool
@@ -64,5 +66,10 @@ class MemberLookup extends Model
             'lookup',
             $this->key,
         ]);
+    }
+
+    public function member(): BelongsTo
+    {
+        return $this->belongsTo(Member::class);
     }
 }

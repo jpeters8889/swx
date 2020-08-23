@@ -17,7 +17,7 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * @property Carbon date
  * @property Session session
  * @property Group group
- * @property Collection<Member> members
+ * @property Collection<MemberBooking> bookings
  * @property Collection<MemberCancellation> cancellations
  */
 class GroupSession extends Model
@@ -33,27 +33,26 @@ class GroupSession extends Model
     ];
 
     /**
-     * @param array $params
-     * @return Member
+     * @param Member $member
      * @throws MemberAlreadyOnSessionException
      * @throws SessionFullException
      * @throws MemberSameDayBookingException
      */
-    public function addMember(array $params): Member
+    public function bookMember(Member $member): void
     {
         if (!$this->hasAvailableSlots()) {
             throw new SessionFullException('No slots available in this session');
         }
 
-        if ($this->hasMember($params)) {
+        if ($this->hasMember($member->id)) {
             throw new MemberAlreadyOnSessionException('Member already exists on this session');
         }
 
-        if ($this->hasSameDaySessionWithMember($params)) {
+        if ($this->hasSameDaySessionWithMember($member->id)) {
             throw new MemberSameDayBookingException('Member already booked onto a session on this day');
         }
 
-        return $this->members()->create($params);
+        $this->bookings()->create(['member_id' => $member->id]);
     }
 
     public function getTypeAttribute()
@@ -78,18 +77,14 @@ class GroupSession extends Model
 
     public function hasAvailableSlots(): bool
     {
-        return $this->members->count() < $this->session->capacity;
+        return $this->bookings()->count() < $this->session->capacity;
     }
 
-    public function hasMember($params): bool
+    public function hasMember($memberId): bool
     {
-        $query = $this->members();
-
-        foreach ($params as $key => $value) {
-            $query->where($key, $value);
-        }
-
-        return $query->exists();
+        return $this->bookings()
+            ->where('member_id', $memberId)
+            ->exists();
     }
 
     public function isFull(): bool
@@ -97,9 +92,9 @@ class GroupSession extends Model
         return !$this->hasAvailableSlots();
     }
 
-    public function members()
+    public function bookings()
     {
-        return $this->hasMany(Member::class);
+        return $this->hasMany(MemberBooking::class);
     }
 
     public function session()
@@ -107,17 +102,13 @@ class GroupSession extends Model
         return $this->belongsTo(Session::class);
     }
 
-    public function hasSameDaySessionWithMember(array $params): bool
+    public function hasSameDaySessionWithMember($memberId): bool
     {
         return self::query()
             ->where('group_id', $this->group_id)
             ->whereDate('date', $this->date)
-            ->whereHas('members', static function (Builder $builder) use ($params) {
-                foreach ($params as $key => $value) {
-                    $builder->where($key, $value);
-                }
-
-                return $builder;
+            ->whereHas('bookings', static function (Builder $builder) use ($memberId) {
+                return $builder->where('member_id', $memberId);
             })
             ->exists();
     }
@@ -127,10 +118,12 @@ class GroupSession extends Model
         return $this->hasMany(MemberCancellation::class);
     }
 
-    public function cancelMember($email): void
+    public function cancelBooking(int $memberId): void
     {
+        $this->bookings()->where('member_id', $memberId)->delete();
+
         $this->cancellations()->create([
-            'email' => $email
+            'member_id' => $memberId
         ]);
     }
 }

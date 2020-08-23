@@ -55,7 +55,7 @@ class MemberLookupCreateTest extends TestCase
         factory(Group::class,)->create(['user_id' => 1]);
         factory(Session::class)->create(['group_id' => 1]);
 
-        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk', 'group_session_id' => 1]);
+        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk']);
 
         $this->makeRequest('jamie@jamie-peters.co.uk')->assertStatus(200);
     }
@@ -67,7 +67,7 @@ class MemberLookupCreateTest extends TestCase
         factory(Group::class,)->create(['user_id' => 1]);
         factory(Session::class)->create(['group_id' => 1]);
 
-        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk', 'group_session_id' => 1]);
+        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk']);
 
         $this->assertEmpty(MemberLookup::all());
 
@@ -85,7 +85,7 @@ class MemberLookupCreateTest extends TestCase
         factory(Group::class,)->create(['user_id' => 1]);
         factory(Session::class)->create(['group_id' => 1]);
 
-        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk', 'group_session_id' => 1]);
+        factory(Member::class)->create(['email' => 'jamie@jamie-peters.co.uk']);
 
         $this->makeRequest('jamie@jamie-peters.co.uk');
 

@@ -37,6 +37,8 @@ class BookingConfirmedNotificationTest extends TestCase
             'date' => Carbon::parse('2020-08-01'),
         ]);
 
+        $this->withoutExceptionHandling();
+
         $this->post("/test-group/1", [
             'name' => 'Foo Bar',
             'email' => 'jamie@jamie-peters.co.uk',
@@ -70,7 +72,7 @@ class BookingConfirmedNotificationTest extends TestCase
 
             // From Name
             [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
-                return $notification->toMail($member)->from[1] === $member->groupSession->group->name;
+                return $notification->toMail($member)->from[1] === $notification->groupSession->group->name;
             }],
 
             // Notification Level
@@ -93,11 +95,11 @@ class BookingConfirmedNotificationTest extends TestCase
                 $message = $notification->toMail($member)->introLines;
 
                 $assertions = [
-                    Str::contains($message[0], $member->groupSession->group->name),
-                    Str::contains($message[0], $member->groupSession->group->user->first_name),
-                    Str::contains($message[0], $member->groupSession->date->format('l jS F Y')),
-                    Str::contains($message[0], $member->groupSession->session->human_start_time),
-                    $message[1] === "Thanks, {$member->groupSession->group->user->first_name}",
+                    Str::contains($message[0], $notification->groupSession->group->name),
+                    Str::contains($message[0], $notification->groupSession->group->user->first_name),
+                    Str::contains($message[0], $notification->groupSession->date->format('l jS F Y')),
+                    Str::contains($message[0], $notification->groupSession->session->human_start_time),
+                    $message[1] === "Thanks, {$notification->groupSession->group->user->first_name}",
                 ];
 
                 return !in_array(false, $assertions, true);

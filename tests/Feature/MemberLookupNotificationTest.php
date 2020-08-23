@@ -9,7 +9,6 @@ use App\Models\Member;
 use App\Models\MemberLookup;
 use App\Models\Session;
 use App\Models\User;
-use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\MemberLookupNotification;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -39,7 +38,6 @@ class MemberLookupNotificationTest extends TestCase
 
         factory(Member::class)->create([
             'email' => 'jamie@jamie-peters.co.uk',
-            'group_session_id' => 1
         ]);
 
         $this->post("/lookup", [
@@ -54,7 +52,7 @@ class MemberLookupNotificationTest extends TestCase
     public function it_dispatches_the_notification($callback)
     {
         Notification::assertSentTo(
-            MemberLookup::query()->first(),
+            Member::query()->first(),
             MemberLookupNotification::class,
             $callback
         );
@@ -66,52 +64,52 @@ class MemberLookupNotificationTest extends TestCase
             [null],
 
             // Mail Channel
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
                 return $channels === ['mail'];
             }],
 
             // From Name
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                return $notification->toMail($lookup)->from[1] === 'Slimming World Bookings';
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                return $notification->toMail($member)->from[1] === 'Slimming World Bookings';
             }],
 
             // Notification Level
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                return $notification->toMail($lookup)->level === 'success';
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                return $notification->toMail($member)->level === 'success';
             }],
 
             // Subject Line
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                return $notification->toMail($lookup)->subject === 'Your Slimming World Bookings';
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                return $notification->toMail($member)->subject === 'Your Slimming World Bookings';
             }],
 
             // Greeting Line
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                return $notification->toMail($lookup)->greeting === 'Your Slimming World Bookings';
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                return $notification->toMail($member)->greeting === 'Your Slimming World Bookings';
             }],
 
             // First Line
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                return $notification->toMail($lookup)->introLines[0] === 'You have requested to view your previous Slimming World bookings, to view your bookings please click the link below.';
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                return $notification->toMail($member)->introLines[0] === 'You have requested to view your previous Slimming World bookings, to view your bookings please click the link below.';
             }],
 
             // Outro Line
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                return $notification->toMail($lookup)->outroLines[0] === 'This link will expire in ' . $lookup::EXPIRY_MINUTES . " minutes, if you didn't request a lookup you can safely ignore this email.";
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                return $notification->toMail($member)->outroLines[0] === 'This link will expire in ' . MemberLookup::EXPIRY_MINUTES . " minutes, if you didn't request a lookup you can safely ignore this email.";
             }],
 
             // CTA Label
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                $message = $notification->toMail($lookup);
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                $message = $notification->toMail($member);
 
                 return $message->actionText = 'View My Bookings';
             }],
 
             // CTA Url
-            [static function (MemberLookupNotification $notification, array $channels, MemberLookup $lookup) {
-                $message = $notification->toMail($lookup);
+            [static function (MemberLookupNotification $notification, array $channels, Member $member) {
+                $message = $notification->toMail($member);
 
-                return $message->actionUrl = $lookup->link();
+                return $message->actionUrl = $member->lookups[0]->link();
             }],
         ];
     }

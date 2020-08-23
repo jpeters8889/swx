@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Member;
+use App\Models\MemberBooking;
 use Closure;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +15,7 @@ class MemberHasBookedOntoSession
             return new RedirectResponse(config('app.url'));
         }
 
-        if (!Member::query()->where('id', $request->session()->get('booking_id'))->exists()) {
+        if (!MemberBooking::query()->where('id', $request->session()->get('booking_id'))->exists()) {
             return new RedirectResponse(config('app.url'));
         }
 

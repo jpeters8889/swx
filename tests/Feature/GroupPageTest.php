@@ -64,6 +64,7 @@ class GroupPageTest extends TestCase
     /** @test */
     public function it_loads_the_group_page()
     {
+        $this->withoutExceptionHandling();
         $this->makeRequest()->assertStatus(200);
     }
 

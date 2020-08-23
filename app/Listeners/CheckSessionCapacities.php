@@ -10,14 +10,14 @@ class CheckSessionCapacities
 {
     public function handle(MemberBookedOntoSession $event)
     {
-        $groupSession = $event->member()->groupSession;
+        $groupSession = $event->groupSession();
 
         if($groupSession->isFull()) {
             $groupSession->group->user->notify(new SessionFullyBookedNotification($groupSession));
             return;
         }
 
-        if($groupSession->members->count() === $groupSession->session->capacity_threshold) {
+        if($groupSession->bookings->count() === $groupSession->session->capacity_threshold) {
             $groupSession->group->user->notify(new SessionNearingCapacityNotification($groupSession));
         }
     }

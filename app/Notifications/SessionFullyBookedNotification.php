@@ -3,7 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\GroupSession;
-use App\Models\Member;
+use App\Models\MembersOld;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;

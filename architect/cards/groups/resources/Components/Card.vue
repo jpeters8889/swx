@@ -21,11 +21,11 @@
                                         }}
                                     </div>
                                     <div class="flex flex-col mb-2 text-right">
-                                        <strong class="font-semibold">Members</strong>
+                                        <strong class="font-semibold">Bookings</strong>
                                         <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
                                            v-tooltip="'View List'"
-                                           @click="viewMemberList(groupSession, group.name)">
-                                            {{ groupSession.members_count }}/{{ groupSession.session.capacity }}
+                                           @click="viewBookings(groupSession, group.name)">
+                                            {{ groupSession.bookings_count }}/{{ groupSession.session.capacity }}
                                         </a>
                                     </div>
                                 </div>
@@ -55,7 +55,7 @@
                     </p>
 
                     <p>
-                        <a :href="'/admin/api/external/groups/printMembers/'+viewedSession.id" target="_blank">Printer
+                        <a :href="'/admin/api/external/groups/printBookings/'+viewedSession.id" target="_blank">Printer
                             Friendly List</a>
                     </p>
 
@@ -140,7 +140,7 @@ export default {
             return moment(date).format(format);
         },
 
-        viewMemberList(groupSession, name) {
+        viewBookings(groupSession, name) {
             if (groupSession.members_count === 0) {
                 return;
             }

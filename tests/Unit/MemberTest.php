@@ -6,9 +6,11 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
@@ -36,12 +38,14 @@ class MemberTest extends TestCase
             'date' => Carbon::today(),
         ]);
 
-        $this->member = factory(Member::class)->create(['group_session_id' => $this->groupSession->id]);
+        $this->member = factory(Member::class)->create();
+        $this->groupSession->bookMember($this->member);
     }
 
     /** @test */
-    public function it_has_a_group_session()
+    public function it_has_a_many_bookings()
     {
-        $this->assertInstanceOf(GroupSession::class, $this->member->groupSession);
+        $this->assertInstanceOf(Collection::class, $this->member->bookings);
+        $this->assertInstanceOf(MemberBooking::class, $this->member->bookings[0]);
     }
 }

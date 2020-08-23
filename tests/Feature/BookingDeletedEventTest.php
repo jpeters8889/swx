@@ -6,6 +6,7 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\MemberLookup;
 use App\Models\Session;
 use App\Models\User;
@@ -36,11 +37,12 @@ class BookingDeletedEventTest extends TestCase
         ]);
 
         factory(Member::class)->create([
-            'group_session_id' => 1,
             'email' => 'jamie@jamie-peters.co.uk',
         ]);
 
-        $lookup = MemberLookup::query()->create(['email' => 'jamie@jamie-peters.co.uk']);
+        MemberBooking::query()->create(['member_id' => 1, 'group_session_id' => 1]);
+
+        $lookup = MemberLookup::query()->create(['member_id' => 1]);
 
         $this->delete("/lookup/{$lookup->key}/1");
     }
@@ -48,7 +50,7 @@ class BookingDeletedEventTest extends TestCase
     /** @test */
     public function it_generates_a_notification()
     {
-        Notification::assertSentTo(MemberLookup::first(), BookingCancelledNotification::class);
+        Notification::assertSentTo(Member::first(), BookingCancelledNotification::class);
     }
 
     /** @test */
@@ -57,6 +59,6 @@ class BookingDeletedEventTest extends TestCase
         $this->assertNotEmpty(MemberLookup::all());
 
         $this->assertNotEmpty(GroupSession::query()->first()->cancellations);
-        $this->assertEquals(MemberLookup::first()->email, 'jamie@jamie-peters.co.uk');
+        $this->assertEquals(MemberLookup::first()->member_id, 1);
     }
 }

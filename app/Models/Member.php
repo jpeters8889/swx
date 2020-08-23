@@ -14,8 +14,18 @@ class Member extends Model
 
     protected $guarded = [];
 
-    public function groupSession()
+    public function bookings()
     {
-        return $this->belongsTo(GroupSession::class);
+        return $this->hasMany(MemberBooking::class);
+    }
+
+    public function cancellations()
+    {
+        return $this->hasMany(MemberCancellation::class);
+    }
+
+    public function lookups()
+    {
+        return $this->hasMany(MemberLookup::class);
     }
 }

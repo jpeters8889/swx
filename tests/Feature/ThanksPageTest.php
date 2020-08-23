@@ -6,6 +6,7 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
@@ -37,8 +38,9 @@ class ThanksPageTest extends TestCase
             'name' => 'Jamie Peters',
             'email' => 'jamie@jamie-peters.co.uk',
             'phone' => '123456',
-            'group_session_id' => 1,
         ]);
+
+        MemberBooking::query()->create(['member_id' => 1, 'group_session_id' => 1]);
     }
 
     /** @test */
@@ -61,14 +63,14 @@ class ThanksPageTest extends TestCase
     /** @test */
     public function it_shows_the_booking_details()
     {
-        /** @var Member $member */
-        $member = Member::query()->first();
+        /** @var MemberBooking $booking */
+        $booking = MemberBooking::query()->first();
 
         $this->makeRequest()
-            ->assertSee($member->groupSession->group->name)
-            ->assertSee($member->groupSession->group->user->first_name)
-            ->assertSee($member->groupSession->date->format('l jS F Y'))
-            ->assertSee($member->groupSession->session->human_start_time)
-            ->assertSee("href=\"/{$member->groupSession->group->slug}\">", false);
+            ->assertSee($booking->groupSession->group->name)
+            ->assertSee($booking->groupSession->group->user->first_name)
+            ->assertSee($booking->groupSession->date->format('l jS F Y'))
+            ->assertSee($booking->groupSession->session->human_start_time)
+            ->assertSee("href=\"/{$booking->groupSession->group->slug}\">", false);
     }
 }

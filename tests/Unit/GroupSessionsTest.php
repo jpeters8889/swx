@@ -15,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class GroupSessionsTest extends TestCase
@@ -61,19 +62,19 @@ class GroupSessionsTest extends TestCase
 
         $this->assertTrue($this->groupSession->hasAvailableSlots());
 
-        $this->groupSession->addMember(factory(Member::class)->raw());
+        $this->groupSession->bookMember(factory(Member::class)->create());
 
         $this->assertFalse($this->groupSession->fresh()->hasAvailableSlots());
     }
 
     /** @test */
-    public function it_can_add_members()
+    public function it_can_book_members()
     {
-        $this->assertEmpty($this->groupSession->members);
+        $this->assertEmpty($this->groupSession->bookings);
 
-        $this->groupSession->addMember(factory(Member::class)->raw());
+        $this->groupSession->bookMember(factory(Member::class)->create());
 
-        $this->assertNotEmpty($this->groupSession->fresh()->members);
+        $this->assertNotEmpty($this->groupSession->fresh()->bookings);
     }
 
     /** @test */
@@ -81,31 +82,32 @@ class GroupSessionsTest extends TestCase
     {
         $this->session->update(['capacity' => 1]);
 
-        $this->groupSession->addMember(factory(Member::class)->raw());
+        $this->groupSession->bookMember(factory(Member::class)->create());
 
         $this->expectException(SessionFullException::class);
         $this->expectExceptionMessage('No slots available in this session');
 
-        $this->groupSession->fresh()->addMember(factory(Member::class)->raw());
+        $this->groupSession->fresh()->bookMember(factory(Member::class)->create());
     }
 
     /** @test */
     public function it_errors_when_trying()
     {
-        $member = factory(Member::class)->raw();
+        $member = factory(Member::class)->create();
 
-        $this->groupSession->addMember($member);
+        $this->groupSession->bookMember($member);
 
         $this->expectException(MemberAlreadyOnSessionException::class);
         $this->expectExceptionMessage('Member already exists on this session');
 
-        $this->groupSession->fresh()->addMember($member);
+        $this->groupSession->fresh()->bookMember($member);
     }
 
     /** @test */
     public function it_has_cancellations()
     {
-        $cancellation = factory(MemberCancellation::class)->create(['group_session_id' => 1]);
+        factory(Member::class)->create();
+        $cancellation = MemberCancellation::query()->create(['member_id' => 1, 'group_session_id' => 1]);
 
         $this->assertInstanceOf(Collection::class, $cancellations =$this->groupSession->fresh()->cancellations);
         $this->assertTrue($cancellation->is($cancellations[0]));
@@ -114,11 +116,12 @@ class GroupSessionsTest extends TestCase
     /** @test */
     public function it_members_can_be_cancelled()
     {
+        $member = factory(Member::class)->create();
         $this->assertEmpty($this->groupSession->cancellations);
 
-        $this->groupSession->cancelMember('jamie@jamie-peters.co.uk');
+        $this->groupSession->cancelBooking($member->id);
 
         $this->assertNotEmpty($this->groupSession->fresh()->cancellations);
-        $this->assertEquals('jamie@jamie-peters.co.uk', MemberCancellation::query()->first()->email);
+        $this->assertEquals($member->id, MemberCancellation::query()->first()->member_id);
     }
 }

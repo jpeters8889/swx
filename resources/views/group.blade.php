@@ -103,7 +103,7 @@
                             :new-member="{{ $groupSession->session->new_member_session ? 'true' : 'false' }}"
                             :capacity="{{ $groupSession->session->capacity }}"
                             :capacity-threshold="{{ $groupSession->session->capacity_threshold }}"
-                            :current-count="{{ $groupSession->members_count }}"
+                            :current-count="{{ $groupSession->bookings_count }}"
                         >
                             {{ $groupSession->session->human_start_time }}
                         </book-session>

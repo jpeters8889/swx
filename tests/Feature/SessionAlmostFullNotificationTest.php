@@ -6,17 +6,15 @@ use App\Events\SessionCreated;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
+use App\Models\MemberBooking;
 use App\Models\Session;
 use App\Models\User;
-use App\Notifications\BookingConfirmedNotification;
 use App\Notifications\SessionNearingCapacityNotification;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
-use Mockery\Matcher\Not;
 use Tests\TestCase;
 
 class SessionAlmostFullNotificationTest extends TestCase
@@ -38,7 +36,11 @@ class SessionAlmostFullNotificationTest extends TestCase
             'date' => Carbon::parse('2020-08-01'),
         ]);
 
-        factory(Member::class, 3)->create(['group_session_id' => 1]);
+        factory(Member::class, 3)->create();
+
+        Member::all()->each(static function(Member $member) {
+            MemberBooking::query()->create(['group_session_id' => 1, 'member_id' => $member->id]);
+        });
     }
 
     /** @test */
@@ -134,7 +136,12 @@ class SessionAlmostFullNotificationTest extends TestCase
         ]);
 
         // We've booked 15 members on
-        factory(Member::class, 15)->create(['group_session_id' => 2]);
+        Member::query()->truncate();
+        factory(Member::class, 15)->create();
+
+        Member::all()->each(static function(Member $member) {
+            MemberBooking::query()->create(['group_session_id' => 2, 'member_id' => $member->id]);
+        });
 
         // Number 16 will trigger the notification
         $this->post("/test-group/2", [

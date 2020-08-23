@@ -9,6 +9,6 @@ class SendBookingConfirmation
 {
     public function handle(MemberBookedOntoSession $event)
     {
-        $event->member()->notify(new BookingConfirmedNotification());
+        $event->member()->notify(new BookingConfirmedNotification($event->groupSession()));
     }
 }

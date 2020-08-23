@@ -9,6 +9,6 @@ class SendBookingCancelledNotification
 {
     public function handle(MemberBookingCancelled $event)
     {
-        $event->lookup()->notify(new BookingCancelledNotification($event->groupSession()));
+        $event->lookup()->member->notify(new BookingCancelledNotification($event->groupSession()));
     }
 }
