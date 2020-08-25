@@ -24,7 +24,7 @@ class BookingController extends Controller
             $groupSession->bookMember($member);
 
             $dispatcher->dispatch(new MemberBookedOntoSession($member, $groupSession));
-            $sessionStore->put('booking_id', $member->id);
+            $sessionStore->put('booking_id', $member->bookings()->latest()->first()->id);
 
             return new Response();
         } catch (MemberAlreadyOnSessionException $e) {
