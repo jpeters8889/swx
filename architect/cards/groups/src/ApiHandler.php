@@ -44,6 +44,7 @@ class ApiHandler
 
         return $group
             ->bookings
+            ->load('groupSession')
             ->sortBy(fn(MemberBooking $booking) => ucfirst(explode(' ', $booking->member->name)[0]))
             ->values();
     }
