@@ -2,11 +2,14 @@
 
 namespace App\Architect\Cards\Groups;
 
+use App\Events\MemberBookingCancelled;
 use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\MemberBooking;
 use App\Models\Session;
+use App\Notifications\BookingCancelledNotification;
 use Carbon\Carbon;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
@@ -101,5 +104,20 @@ class ApiHandler
         abort_if($session->group->user_id !== $request->user()->id, 403);
 
         return $session;
+    }
+
+    public function deleteBooking(Request $request, $id)
+    {
+        /** @var MemberBooking $booking */
+        $booking = MemberBooking::query()
+            ->findOrFail($id);
+
+        abort_if($booking->groupSession->group->user_id !== $request->user()->id, 403);
+
+        $booking->delete();
+
+        if ($request->input('notifyMember')) {
+            $booking->member->notify(new BookingCancelledNotification($booking->groupSession));
+        }
     }
 }

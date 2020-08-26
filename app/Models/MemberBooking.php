@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * @property GroupSession groupSession
+ * @property Member member
  */
 class MemberBooking extends Model
 {

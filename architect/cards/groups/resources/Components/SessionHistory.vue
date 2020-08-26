@@ -27,11 +27,6 @@
         <portal to="secondary-modal" v-if="showBookings">
             <modal title="Member List" id="inner-member-list">
                 <div class="w-full bg-gray-100 p-2">
-                    <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
-                         @click="showBookings = false">
-                        <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
-                    </div>
-
                     <p>
                         <a :href="'/admin/api/external/groups/printBookings/'+groupSessionId" target="_blank">
                             Printer Friendly List

@@ -18,6 +18,8 @@ class CardServiceProvider extends ServiceProvider
             $architect->apiManager->registerEndpoint('get', 'groups', ApiHandler::class, 'printBookings');
             $architect->apiManager->registerEndpoint('get', 'groups', ApiHandler::class, 'session');
 
+            $architect->apiManager->registerEndpoint('post', 'groups', ApiHandler::class, 'deleteBooking');
+
             $architect->assetManager->registerScript('Groups', __DIR__.'/../dist/card.js');
             $architect->assetManager->registerStyle('Groups', __DIR__.'/../dist/card.css');
         });

@@ -67,11 +67,6 @@
         <portal to="modal" v-if="showSessionDetail">
             <modal title="Session History" id="session-history">
                 <div class="w-full bg-gray-100 p-2">
-                    <div class="absolute top-0 right-0 p-1 leading-none text-xl cursor-pointer"
-                         @click="showSessionDetail = false">
-                        <font-awesome-icon :icon="['fas', 'times']"></font-awesome-icon>
-                    </div>
-
                     <session-history :group-name="viewedName" :session-id="sessionId"></session-history>
                 </div>
             </modal>
