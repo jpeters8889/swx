@@ -28,4 +28,12 @@ class MemberBlueprint extends Blueprint
     {
         return false;
     }
+
+    public function ordering(): array
+    {
+        return [
+            'name',
+            'asc',
+        ];
+    }
 }
