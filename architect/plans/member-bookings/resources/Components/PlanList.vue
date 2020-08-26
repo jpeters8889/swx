@@ -10,7 +10,8 @@
                 <div class="w-full bg-gray-100 p-2">
                     <ul v-if="bookings.length > 0">
                         <li v-for="booking in bookings">
-                            {{ booking.group_session.group.name }}, {{ formatDate(booking.group_session.date) }} {{ booking.group_session.session.human_start_time }}
+                            {{ booking.group_session.group.name }}, {{ formatDate(booking.group_session.date) }}
+                            {{ booking.group_session.session.human_start_time }}
                         </li>
                     </ul>
                 </div>
@@ -30,9 +31,7 @@ export default {
     }),
 
     mounted() {
-        Architect.request().get(`/external/members/bookingsCount/${this.id}`).then((response) => {
-            this.bookingCount = response.data.bookings;
-        });
+        this.getCount();
 
         Architect.$on('modal-close', () => {
             this.showDetail = false;
@@ -40,12 +39,24 @@ export default {
     },
 
     methods: {
+        getCount() {
+            Architect.request().get(`/external/members/bookingsCount/${this.id}`).then((response) => {
+                this.bookingCount = response.data.bookings;
+            });
+        },
+
         formatDate(date, format = 'Do MMMM YYYY') {
             return moment(date).format(format);
         },
     },
 
     watch: {
+        id: function () {
+            Architect.request().get(`/external/members/bookingsCount/${this.id}`).then((response) => {
+                this.bookingCount = response.data.bookings;
+            });
+        },
+
         showDetail: function () {
             Architect.request().get(`/external/members/bookings/${this.id}`).then((response) => {
                 this.bookings = response.data.bookings;

@@ -3,6 +3,7 @@
 namespace App\Architect\Plans\MemberBookings;
 
 use App\Models\Member;
+use App\Models\MemberBooking;
 
 class ApiHandler
 {
@@ -22,6 +23,7 @@ class ApiHandler
                     'groupSession.session.day',
                     'groupSession.group']
                 )
+            ->sortBy(fn(MemberBooking $booking) => $booking->groupSession->date),
         ];
     }
 }
