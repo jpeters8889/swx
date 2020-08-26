@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Architect\Dashboard;
 use App\Architect\GroupBlueprint;
+use App\Architect\MemberBlueprint;
 use JPeters\Architect\Dashboards\DashboardContract;
 use JPeters\Architect\Providers\ArchitectApplicationServiceProvider;
 
@@ -18,6 +19,7 @@ class ArchitectServiceProvider extends ArchitectApplicationServiceProvider
     {
         return [
             GroupBlueprint::class,
+            MemberBlueprint::class,
         ];
     }
 

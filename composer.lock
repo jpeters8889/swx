@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "89d08b274e3838f1cc03022f588a4d5e",
+    "content-hash": "0f4e310641073fcf7a214a1d888728c7",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2787,6 +2787,34 @@
             "autoload": {
                 "psr-4": {
                     "App\\Architect\\Cards\\Groups\\": "src/"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "transport-options": {
+                "relative": true
+            }
+        },
+        {
+            "name": "sw/member-bookings",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "./architect/plans/member-bookings",
+                "reference": "983ad1ccec93020ffe66c31483fa5e11dad279fa"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "App\\Architect\\Plans\\MemberBookings\\PlanServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "App\\Architect\\Plans\\MemberBookings\\": "src/"
                 }
             },
             "license": [
@@ -7254,7 +7282,8 @@
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": {
-        "sw/groups": 20
+        "sw/groups": 20,
+        "sw/member-bookings": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,

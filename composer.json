@@ -20,7 +20,8 @@
         "laravel/tinker": "^2.0",
         "spatie/laravel-sluggable": "^2.5",
         "spatie/test-time": "^1.2",
-        "sw/groups": "dev-master"
+        "sw/groups": "dev-master",
+        "sw/member-bookings": "dev-master"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -47,6 +48,14 @@
         {
             "type": "path",
             "url": "./architect/cards/groups"
+        },
+        {
+            "type": "path",
+            "url": "./architect/plans/member-bookings"
+        },
+        {
+            "type": "path",
+            "url": "./architect/plans/member-bookings"
         }
     ],
     "autoload": {

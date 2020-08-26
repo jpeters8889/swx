@@ -28,4 +28,8 @@ class Member extends Model
     {
         return $this->hasMany(MemberLookup::class);
     }
+
+    public function getBookingsCountAttribute() {
+        return $this->bookings()->count();
+    }
 }
