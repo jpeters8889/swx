@@ -23,7 +23,8 @@ class ApiHandler
                     'groupSession.session.day',
                     'groupSession.group']
                 )
-            ->sortBy(fn(MemberBooking $booking) => $booking->groupSession->date),
+            ->sortBy(fn(MemberBooking $booking) => $booking->groupSession->date)
+            ->values(),
         ];
     }
 }
