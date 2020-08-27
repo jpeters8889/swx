@@ -50,10 +50,16 @@ class LookupController extends Controller
         /** @var Member $member */
         $member = $request->memberLookup()->member;
 
-        /** @var MemberBooking $booking */
-        $booking = $member->bookings()->where('id', $id)->first();
+        $simularMembers = Member::query()->where('email', $member->email)->get();
 
-        abort_if(!$member || !$booking, 404);
+        /** @var MemberBooking $booking */
+//        $booking = $member->bookings()->where('id', $id)->first();
+        $booking = MemberBooking::query()
+            ->whereIn('member_id', $simularMembers->pluck('id'))
+            ->where('id', $id)
+            ->first();
+
+        abort_if(!$booking, 404);
 
         $booking->delete();
 

@@ -1,8 +1,7 @@
 <template>
     <div>
-        <div class="p-4 flex flex-col text-white font-semibold text-center sm:items-center cursor-pointer"
-             @click="viewModal = true">
-            Click here to view and manage your previous bookings.
+        <div v-if="hasTrigger" @click="viewModal = true">
+            <slot></slot>
         </div>
 
         <modal closeable v-if="viewModal">
@@ -39,7 +38,8 @@
                         Cancel
                     </a>
 
-                    <button class="bg-sw-green rounded p-2 text-semibold text-white cursor-pointer" @click.prevent="submitLookup()">
+                    <button class="bg-sw-green rounded p-2 text-semibold text-white cursor-pointer"
+                            @click.prevent="submitLookup()">
                         Submit
                     </button>
                 </div>
@@ -68,6 +68,13 @@
 
 <script>
 export default {
+    props: {
+        hasTrigger: {
+            type: Boolean,
+            default: true,
+        }
+    },
+
     data: () => ({
         viewModal: false,
 
@@ -84,6 +91,10 @@ export default {
     }),
 
     mounted() {
+        if(!this.hasTrigger) {
+            this.viewModal = true;
+        }
+
         this.$root.$on('close-modal', () => {
             this.close();
         })

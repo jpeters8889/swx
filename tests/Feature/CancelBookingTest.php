@@ -110,4 +110,21 @@ class CancelBookingTest extends TestCase
             return $event->lookup()->is($this->lookup);
         });
     }
+
+    /** @test */
+    public function it_deletes_a_booking_for_another_member_when_the_email_is_the_same()
+    {
+        $newMember = factory(Member::class)->create([
+            'email' => 'jamie@jamie-peters.co.uk',
+            'name' => 'Same Email Member',
+        ]);
+
+        MemberBooking::query()->create(['member_id' => 2, 'group_session_id' => 1]);
+
+        $this->assertNotEmpty(1, $newMember->bookings);
+
+        $this->delete('/lookup/' . $this->lookup->key . '/2');
+
+        $this->assertEmpty($newMember->fresh()->bookings);
+    }
 }

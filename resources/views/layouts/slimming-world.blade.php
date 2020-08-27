@@ -24,7 +24,11 @@
     </div>
 
     <div class="bg-sw-red rounded-b">
-        <member-lookup></member-lookup>
+        <member-lookup>
+            <div class="p-4 flex flex-col text-white font-semibold text-center sm:items-center cursor-pointer">
+                Click here to view and manage your previous bookings.
+            </div>
+        </member-lookup>
     </div>
 </div>
 
