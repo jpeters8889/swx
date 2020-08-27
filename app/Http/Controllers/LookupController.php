@@ -25,16 +25,21 @@ class LookupController extends Controller
 
     public function get(Page $page, ViewMemberLookupRequest $request)
     {
+        /** @var Member $member */
+        $member = $request->memberLookup()->member;
+
+        $relatedMembers = Member::query()->where('email', $member->email)->get();
+
         return $page->render('lookup', [
             'key' => $request->route('key'),
 
-            'member' => $request->memberLookup()->member,
-
-            'upcoming' => $request->memberLookup()->member->bookings()
+            'upcoming' => MemberBooking::query()
+                ->whereIn('member_id', $relatedMembers->pluck('id'))
                 ->whereHas('groupSession', fn(Builder $builder) => $builder->where('date', '>=', Carbon::today()))
                 ->get(),
 
-            'past' => $request->memberLookup()->member->bookings()
+            'past' => MemberBooking::query()
+                ->whereIn('member_id', $relatedMembers->pluck('id'))
                 ->whereHas('groupSession', fn(Builder $builder) => $builder->where('date', '<', Carbon::today()))
                 ->get(),
         ]);

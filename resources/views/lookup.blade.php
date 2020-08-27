@@ -34,7 +34,7 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <strong class="font-semibold">Booked Member Name</strong>
-                                    {{ $member->name }}
+                                    {{ $booking->member->name }}
                                 </div>
                             </div>
                             <div class="p-2">
@@ -69,7 +69,7 @@
                             </div>
                             <div class="flex flex-col">
                                 <strong class="font-semibold">Booked Member Name</strong>
-                                {{ $member->name }}
+                                {{ $booking->member->name }}
                             </div>
                         </li>
                     @empty

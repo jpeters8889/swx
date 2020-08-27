@@ -87,6 +87,20 @@ class ViewBookingsTest extends TestCase
     }
 
     /** @test */
+    public function it_also_shows_booking_for_a_different_member_with_the_same_email()
+    {
+        factory(Member::class)->create([
+            'email' => 'jamie@jamie-peters.co.uk',
+            'name' => 'Same Email Member',
+        ]);
+
+        MemberBooking::query()->create(['member_id' => 2, 'group_session_id' => 1]);
+
+        $this->get('/lookup/' . $this->lookup->key)
+            ->assertSee('Same Email Member');
+    }
+
+    /** @test */
     public function it_shows_no_upcoming_bookings_when_none_available()
     {
         TestTime::addDays(2);

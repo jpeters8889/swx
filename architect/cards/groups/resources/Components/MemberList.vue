@@ -132,7 +132,7 @@ export default {
         },
 
         canCancelBooking(booking) {
-            return window.moment().isBefore(booking.group_session.date)
+            return window.moment().add(1, 'day').isBefore(booking.group_session.date)
             // return true;
         }
     }
