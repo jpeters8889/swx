@@ -6,6 +6,7 @@ use App\Events\MemberBookedOntoSession;
 use App\Events\MemberBookingCancelled;
 use App\Events\MemberLookupCreated;
 use App\Events\SessionCreated;
+use App\Listeners\CreateLookupForNewBooking;
 use App\Listeners\LogMemberCancellation;
 use App\Listeners\SendBookingCancelledNotification;
 use App\Listeners\CheckSessionCapacities;
@@ -27,6 +28,7 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         MemberBookedOntoSession::class => [
+            CreateLookupForNewBooking::class,
             SendBookingConfirmation::class,
             CheckSessionCapacities::class,
         ],

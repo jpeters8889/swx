@@ -5,6 +5,7 @@ namespace App\Notifications;
 use App\Models\GroupSession;
 use App\Models\Member;
 use App\Models\MemberBooking;
+use App\Models\MemberLookupSource;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -23,6 +24,12 @@ class BookingConfirmedNotification extends Notification implements ShouldQueue
 
     public function toMail(Member $member)
     {
+        $lookupUrl = $member->lookups()
+            ->where('member_lookup_source_id', MemberLookupSource::FROM_BOOKING)
+            ->latest()
+            ->first()
+            ->link();
+
         return (new MailMessage())
             ->from('notifications@sw-booking.co.uk', $this->groupSession->group->name)
             ->level('success')
@@ -31,6 +38,8 @@ class BookingConfirmedNotification extends Notification implements ShouldQueue
             ->line("Your booking for the {$this->groupSession->group->name} Slimming World group with
             {$this->groupSession->group->user->first_name} on {$this->groupSession->date->format('l jS F Y')}
             at {$this->groupSession->session->human_start_time} has been confirmed!")
+            ->line('If you need to cancel your booking or view any of your previous bookings please use the link below.')
+            ->action('View Bookings', $lookupUrl)
             ->line("Thanks, {$this->groupSession->group->user->first_name}");
     }
 

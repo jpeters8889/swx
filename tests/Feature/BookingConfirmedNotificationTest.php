@@ -34,7 +34,7 @@ class BookingConfirmedNotificationTest extends TestCase
         GroupSession::query()->create([
             'group_id' => 1,
             'session_id' => 1,
-            'date' => Carbon::parse('2020-08-01'),
+            'date' => Carbon::tomorrow(),
         ]);
 
         $this->withoutExceptionHandling();
@@ -90,19 +90,42 @@ class BookingConfirmedNotificationTest extends TestCase
                 return $notification->toMail($member)->greeting === 'Booking Confirmed!';
             }],
 
-            // Message Content
+            // Intro Lines
             [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
-                $message = $notification->toMail($member)->introLines;
+                $introLines = $notification->toMail($member)->introLines;
 
                 $assertions = [
-                    Str::contains($message[0], $notification->groupSession->group->name),
-                    Str::contains($message[0], $notification->groupSession->group->user->first_name),
-                    Str::contains($message[0], $notification->groupSession->date->format('l jS F Y')),
-                    Str::contains($message[0], $notification->groupSession->session->human_start_time),
-                    $message[1] === "Thanks, {$notification->groupSession->group->user->first_name}",
+                    Str::contains($introLines[0], $notification->groupSession->group->name),
+                    Str::contains($introLines[0], $notification->groupSession->group->user->first_name),
+                    Str::contains($introLines[0], $notification->groupSession->date->format('l jS F Y')),
+                    Str::contains($introLines[0], $notification->groupSession->session->human_start_time),
+//                    $message[1] === "Thanks, {$notification->groupSession->group->user->first_name}",
+                    $introLines[1] === 'If you need to cancel your booking or view any of your previous bookings please use the link below.',
                 ];
 
                 return !in_array(false, $assertions, true);
+            }],
+
+            // Button
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
+                $button = [
+                    'label' => $notification->toMail($member)->actionText,
+                    'url' => $notification->toMail($member)->actionUrl,
+                ];
+
+                $assertions = [
+                    $button['label'] => 'View Bookings',
+                    $button['url'] => $member->lookups[0]->link()
+                ];
+
+                return !in_array(false, $assertions, true);
+            }],
+
+            // Outro Text
+            [static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
+                $outroLines = $notification->toMail($member)->outroLines;
+
+                return $outroLines[0] === "Thanks, {$notification->groupSession->group->user->first_name}";
             }],
         ];
     }

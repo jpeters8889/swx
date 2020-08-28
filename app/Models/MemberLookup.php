@@ -40,7 +40,10 @@ class MemberLookup extends Model
     {
         self::creating(function (self $lookup) {
             $lookup->key = Str::uuid();
-            $lookup->valid_until = Carbon::now()->addMinutes(static::EXPIRY_MINUTES);
+
+            if (!$lookup->valid_until) {
+                $lookup->valid_until = Carbon::now()->addMinutes(static::EXPIRY_MINUTES);
+            }
         });
     }
 

@@ -7,6 +7,8 @@ use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
 use App\Models\MemberBooking;
+use App\Models\MemberLookup;
+use App\Models\MemberLookupSource;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
@@ -95,6 +97,30 @@ class MemberBookTest extends TestCase
         $this->assertEquals('Jamie', Member::query()->first()->name);
         $this->assertEquals('jamie@jamie-peters.co.uk', Member::query()->first()->email);
         $this->assertEquals('123456', Member::query()->first()->phone);
+    }
+
+    /** @test */
+    public function it_adds_a_row_to_the_member_lookup_table()
+    {
+        $this->assertEmpty(MemberLookup::all());
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456');
+
+        $this->assertNotEmpty(MemberLookup::all());
+        $this->assertNotEmpty(Member::query()->first()->lookups);
+    }
+
+    /** @test */
+    public function it_creates_a_lookup_record_that_is_valid_until_the_group()
+    {
+        GroupSession::query()->first()->update(['date' => $date = Carbon::now()->addDays(2)]);
+
+        $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456');
+
+        $lookup = MemberLookup::query()->first();
+
+        $this->assertTrue($date->endOfDay()->is($lookup->valid_until));
+        $this->assertEquals(MemberLookupSource::FROM_BOOKING, $lookup->member_lookup_source_id);
     }
 
     /** @test */

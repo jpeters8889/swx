@@ -16,6 +16,11 @@ use JPeters\PageViewBuilder\Page;
 
 class LookupController extends Controller
 {
+    public function index(Page $page)
+    {
+        return $page->render('lookup');
+    }
+
     public function create(CreateMemberLookupRequest $request, Dispatcher $dispatcher)
     {
         $lookup = MemberLookup::query()->create(['member_id' => $request->member()->id]);
@@ -30,7 +35,7 @@ class LookupController extends Controller
 
         $relatedMembers = Member::query()->where('email', $member->email)->get();
 
-        return $page->render('lookup', [
+        return $page->render('view_lookup', [
             'key' => $request->route('key'),
 
             'upcoming' => MemberBooking::query()

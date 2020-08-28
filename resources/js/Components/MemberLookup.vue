@@ -102,6 +102,10 @@ export default {
 
     methods: {
         close() {
+            if(!this.hasTrigger) {
+                window.location.href = '/';
+            }
+
             this.loading = false;
             this.done = false;
             this.email = '';

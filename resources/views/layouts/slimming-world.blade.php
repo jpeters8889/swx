@@ -19,7 +19,7 @@
         <h2>Book Online</h2>
     </div>
 
-    <div class="flex-flex w-full bg-white border-sw-red border-2 border-t-0 p-2">
+    <div class="flex-1 w-full bg-white border-sw-red border-2 border-t-0 p-2">
         @yield('content')
     </div>
 

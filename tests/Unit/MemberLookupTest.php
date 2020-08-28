@@ -7,6 +7,7 @@ use App\Models\GroupSession;
 use App\Models\Member;
 use App\Models\MemberBooking;
 use App\Models\MemberLookup;
+use App\Models\MemberLookupSource;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
@@ -44,10 +45,27 @@ class MemberLookupTest extends TestCase
     }
 
     /** @test */
-    public function it_creates_a_valid_until_timestamp()
+    public function it_creates_a_valid_until_timestamp_with_the_default_value()
     {
         $this->assertNotNull($this->lookup->valid_until);
         $this->assertInstanceOf(Carbon::class, $this->lookup->valid_until);
+    }
+
+    /** @test */
+    public function the_valid_until_time_can_be_changed()
+    {
+        $lookup = MemberLookup::query()->create([
+            'member_id' => $this->member->id,
+            'valid_until' => $date = Carbon::tomorrow()->endOfDay(),
+        ]);
+
+        $this->assertTrue($lookup->valid_until->is($date));
+    }
+
+    /** @test */
+    public function it_has_a_default_lookup_source()
+    {
+        $this->assertEquals(MemberLookupSource::MEMBER_CREATED, $this->lookup->fresh()->member_lookup_source_id);
     }
 
     /** @test */

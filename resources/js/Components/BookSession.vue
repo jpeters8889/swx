@@ -33,9 +33,16 @@
                     Sorry, you're already booked on this session!
                 </p>
 
-                <p class="text-lg text-center mb-2 text-sw-red font-semibold" v-if="errors.sameday">
-                    Sorry, you're already booked onto a session on the same day as this one!
-                </p>
+                <template v-if="errors.sameday">
+                    <p class="text-lg text-center text-sw-red font-semibold mb-2">
+                        Sorry, you're already booked onto a session on the same day as this one!
+                    </p>
+                    <p class="text-lg text-center text-sw-blue font-semibold mb-2 hover:underline">
+                        <a href="/lookup">
+                            Can't remember what you're booked on? Click here to enter your email and find out!
+                        </a>
+                    </p>
+                </template>
 
                 <div class="my-3">
                     <input type="text" v-model="fields.name" placeholder="Your name..."

@@ -19,6 +19,7 @@ $router->group(['middleware' => MemberHasBookedOntoSession::class], static funct
 });
 
 $router->group(['prefix' => 'lookup'], static function ($router) {
+    $router->get('/', [LookupController::class, 'index']);
     $router->post('/', [LookupController::class, 'create']);
 
     $router->group(['prefix' => '{key}'], static function ($router) {
