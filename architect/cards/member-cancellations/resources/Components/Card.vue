@@ -6,9 +6,12 @@
             {{ this.cancellation.member.phone }}
         </span>
         <strong class="text-lg">{{ this.cancellation.group_session.group.name }}</strong>
-        <span>
+        <span class="mb-2">
             {{ this.formatDate(this.cancellation.group_session.date) }},
             {{ this.cancellation.group_session.session.human_start_time }}
+        </span>
+        <span class="italic">
+            Cancelled at {{ formatDate(this.cancellation.created_at, 'DD/MM/YY HH:mm')}}
         </span>
     </div>
 </template>
