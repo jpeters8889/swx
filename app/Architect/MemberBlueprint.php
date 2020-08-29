@@ -4,6 +4,7 @@ namespace App\Architect;
 
 use App\Architect\Plans\MemberBookings\Plan;
 use App\Models\Member;
+use Illuminate\Database\Eloquent\Builder;
 use JPeters\Architect\Blueprints\Blueprint;
 use JPeters\Architect\Plans\Textfield;
 
@@ -12,6 +13,11 @@ class MemberBlueprint extends Blueprint
     public function model(): string
     {
         return Member::class;
+    }
+
+    public function getData(): Builder
+    {
+        return parent::getData();
     }
 
     public function plans(): array

@@ -14,14 +14,15 @@
         "fideloper/proxy": "^4.2",
         "fruitcake/laravel-cors": "^1.0",
         "guzzlehttp/guzzle": "^6.3",
-        "jpeters/architect": "^0.3.2",
+        "jpeters/architect": "^0.3.5",
         "jpeters/laravel-page-view": "^0.1.4",
         "laravel/framework": "^7.0",
         "laravel/tinker": "^2.0",
         "spatie/laravel-sluggable": "^2.5",
         "spatie/test-time": "^1.2",
         "sw/groups": "dev-master",
-        "sw/member-bookings": "dev-master"
+        "sw/member-bookings": "dev-master",
+        "sw/member-cancellations": "dev-master"
     },
     "require-dev": {
         "facade/ignition": "^2.0",
@@ -56,6 +57,10 @@
         {
             "type": "path",
             "url": "./architect/plans/member-bookings"
+        },
+        {
+            "type": "path",
+            "url": "./architect/cards/member-cancellations"
         }
     ],
     "autoload": {

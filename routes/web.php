@@ -29,9 +29,11 @@ $router->group(['prefix' => 'lookup'], static function ($router) {
 });
 
 $router->group(['prefix' => '{group}', 'middleware' => GroupExists::class], static function ($router) {
-    $router->get('', [GroupController::class, 'list'])->where('group', '^(?!admin$).*');
+    $router->get('', [GroupController::class, 'list'])
+        ->where('group', '^(?!admin$).*');
 
     $router->group(['middleware' => GroupSessionBelongsToGroup::class], static function ($router) {
-        $router->post('{session}', [BookingController::class, 'create'])->where('group', '^(?!admin$).*');
+        $router->post('{session}', [BookingController::class, 'create'])
+            ->where('group', '^(?!admin$).*');
     });
 });
