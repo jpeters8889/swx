@@ -69,7 +69,7 @@ class LookupController extends Controller
         $booking->delete();
 
         $dispatcher->dispatch(
-            new MemberBookingCancelled($request->memberLookup(), $booking->groupSession)
+            new MemberBookingCancelled($booking->member, $booking->groupSession)
         );
     }
 }

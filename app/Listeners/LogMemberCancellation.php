@@ -10,6 +10,6 @@ class LogMemberCancellation
     {
         $bookingCancelled
             ->groupSession()
-            ->cancelBooking($bookingCancelled->lookup()->member->id);
+            ->cancelBooking($bookingCancelled->member()->id);
     }
 }
