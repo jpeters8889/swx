@@ -25,7 +25,7 @@
                         <div>
                             <strong>Booking Date:</strong> {{ formatDate(booking.created_at) }}
                         </div>
-                        <div v-if="canCancelBooking(booking)">
+                        <div v-if="booking.cancelable">
                             <div
                                 class="flex-1 py-1 bg-red-500 text-white text-base text-center rounded-lg font-semibold mt-2 slider-bg max-w-98"
                                 @click="cancelBooking(booking)">
@@ -130,11 +130,6 @@ export default {
             this.cancel.notify = true;
             this.cancel.booking = null;
         },
-
-        canCancelBooking(booking) {
-            return window.moment().add(1, 'day').isBefore(booking.group_session.date)
-            // return true;
-        }
     }
 }
 </script>
