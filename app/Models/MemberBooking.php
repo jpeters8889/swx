@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -10,7 +11,20 @@ use Illuminate\Database\Eloquent\Model;
  */
 class MemberBooking extends Model
 {
+    protected $appends = ['cancelable'];
+
+    protected $casts = [
+        'cancelable' => 'bool',
+    ];
+
     protected $guarded = [];
+
+    public function getCancelableAttribute()
+    {
+        $sessionTime = $this->groupSession->date->format('Y-m-d') . ' ' . $this->groupSession->session->start_at;
+
+        return Carbon::now()->isBefore(Carbon::parse($sessionTime));
+    }
 
     public function groupSession()
     {
