@@ -4,12 +4,12 @@ namespace Tests\Unit;
 
 use App\Events\SessionCreated;
 use App\Models\Group;
+use App\Models\GroupAnnouncement;
 use App\Models\GroupSession;
 use App\Models\Session;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Event;
 use Tests\TestCase;
 
@@ -102,5 +102,40 @@ class GroupTest extends TestCase
         $this->assertEquals(['9:30am', '11am'], $sessionList['Monday']);
         $this->assertEquals(['5pm'], $sessionList['Wednesday']);
         $this->assertEquals(['11am*'], $sessionList['Friday']);
+    }
+
+    /** @test */
+    public function it_can_have_announcements()
+    {
+        $this->assertEmpty($this->group->announcements);
+
+        factory(GroupAnnouncement::class)->create(['group_id' => 1]);
+
+        $this->assertNotEmpty($this->group->fresh()->announcements);
+    }
+
+    /** @test */
+    public function it_gets_the_latest_active_announcement()
+    {
+        factory(GroupAnnouncement::class)
+            ->create(['group_id' => 1, 'start_at' => Carbon::yesterday()]);
+
+        $second = factory(GroupAnnouncement::class)
+            ->create(['group_id' => 1]);
+
+        $this->assertTrue($second->is($this->group->latestAnnouncement()));
+    }
+
+    /** @test */
+    public function it_doesnt_return_an_anouncement_if_one_isnt_active()
+    {
+        factory(GroupAnnouncement::class)
+            ->create([
+                'group_id' => 1,
+                'start_at' => Carbon::now()->subWeek(),
+                'end_at' => Carbon::yesterday(),
+            ]);
+
+        $this->assertNull($this->group->fresh()->latestAnnouncement());
     }
 }

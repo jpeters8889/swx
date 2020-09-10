@@ -20,6 +20,11 @@ class Group extends Model
 
     protected $guarded = [];
 
+    public function announcements()
+    {
+        return $this->hasMany(GroupAnnouncement::class);
+    }
+
     public function getSessionListAttribute()
     {
         $sessions = [];
@@ -38,7 +43,7 @@ class Group extends Model
                     $format = 'ga';
                 }
 
-                if($session->new_member_session) {
+                if ($session->new_member_session) {
                     $format .= '\*';
                 }
 
@@ -53,9 +58,25 @@ class Group extends Model
         return $sessions;
     }
 
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug');
+    }
+
     public function groupSessions()
     {
         return $this->hasMany(GroupSession::class);
+    }
+
+    public function latestAnnouncement()
+    {
+        return $this->announcements()
+            ->whereDate('start_at', '>=', Carbon::now())
+            ->whereDate('end_at', '>=', Carbon::now())
+            ->latest()
+            ->first();
     }
 
     public function sessions()
@@ -66,12 +87,5 @@ class Group extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function getSlugOptions(): SlugOptions
-    {
-        return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug');
     }
 }

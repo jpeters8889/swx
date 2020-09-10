@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Architect\Dashboard;
+use App\Architect\GroupAnnouncementBlueprint;
 use App\Architect\GroupBlueprint;
 use App\Architect\MemberBlueprint;
 use App\Architect\MemberCancellationsBlueprint;
@@ -20,6 +21,7 @@ class ArchitectServiceProvider extends ArchitectApplicationServiceProvider
     {
         return [
             GroupBlueprint::class,
+            GroupAnnouncementBlueprint::class,
             MemberBlueprint::class,
             MemberCancellationsBlueprint::class,
         ];

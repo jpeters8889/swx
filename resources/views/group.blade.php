@@ -30,7 +30,8 @@
                         bring your own too if you like.
                     </li>
                     <li>
-                        Masks <strong>must</strong> be worn while in group, unless you are exempt under government guidelines.
+                        Masks <strong>must</strong> be worn while in group, unless you are exempt under government
+                        guidelines.
                     </li>
                     <li>
                         There will be a one-way system in the venue and queueing outside the seating area.
@@ -82,6 +83,12 @@
                     </li>
                 </ul>
             </accordion>
+
+            @if($group->latestAnnouncement())
+                <div class="bg-sw-green rounded p-3 font-semibold mt-2 text-white text-center">
+                    <p>{{ $group->latestAnnouncement()->announcement }}</p>
+                </div>
+            @endif
         </div>
 
         @foreach($dates as $date)
@@ -104,6 +111,7 @@
                             :capacity="{{ $groupSession->session->capacity }}"
                             :capacity-threshold="{{ $groupSession->session->capacity_threshold }}"
                             :current-count="{{ $groupSession->bookings_count }}"
+                            :announcement="{{ $group->latestAnnouncement() ?? '[]'}}"
                         >
                             {{ $groupSession->session->human_start_time }}
                         </book-session>

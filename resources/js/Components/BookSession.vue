@@ -89,6 +89,8 @@
                         Confirm
                     </button>
                 </div>
+
+                <p v-if="announcement.announcement" class="mt-3 text-center font-semibold" v-text="announcement.announcement"></p>
             </template>
 
             <template v-if="loading">
@@ -144,6 +146,9 @@ export default {
         currentCount: {
             type: Number,
             required: true,
+        },
+        announcement: {
+            default: null,
         }
     },
 

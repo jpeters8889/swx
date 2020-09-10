@@ -8,6 +8,7 @@ use App\Models\Group;
 use App\Models\GroupSession;
 use App\Models\Member;
 use App\Models\MemberBooking;
+use App\Models\MemberCancellation;
 use App\Models\MemberLookup;
 use App\Models\Session;
 use App\Models\User;
@@ -141,9 +142,11 @@ class CancelBookingTest extends TestCase
         ]);
 
         MemberBooking::query()->create(['member_id' => 2, 'group_session_id' => 1]);
+        $this->assertCount(0, MemberCancellation::all());
 
         $this->delete('/lookup/' . $this->lookup->key . '/2');
 
         Notification::assertSentTo($newMember, BookingCancelledNotification::class);
+        $this->assertCount(1, MemberCancellation::all());
     }
 }

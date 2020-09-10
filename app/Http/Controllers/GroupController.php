@@ -15,6 +15,7 @@ class GroupController extends Controller
     {
         $group = Group::query()
             ->where('slug', $group)
+            ->with('announcements')
             ->first();
 
         abort_if(!$group, 404, 'Group not found');
