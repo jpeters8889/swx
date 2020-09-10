@@ -10,8 +10,6 @@ class GroupAnnouncement extends Model
 
     protected $guarded = [];
 
-    protected $visible = ['announcement'];
-
     public function group() {
         return $this->belongsTo(Group::class);
     }
