@@ -73,7 +73,7 @@ class Group extends Model
     public function latestAnnouncement()
     {
         return $this->announcements()
-            ->whereDate('start_at', '>=', Carbon::now())
+            ->whereDate('start_at', '<', Carbon::now())
             ->whereDate('end_at', '>=', Carbon::now())
             ->latest()
             ->first();
