@@ -31,6 +31,7 @@ class ApiHandler
                 'groupSessions.session',
                 'groupSessions.session.day'
             ])
+            ->orderBy('order')
             ->orderBy('name')
             ->get();
     }
