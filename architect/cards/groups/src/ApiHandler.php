@@ -63,16 +63,20 @@ class ApiHandler
 
         $rtr = "<html>
             <body>
-                <h1>Member List for {$groupSession->group->name}, {$groupSession->date->format('jS M Y')} - {$groupSession->session->human_start_time}</h1>
-            </body>
+                <h1>Member List for {$groupSession->group->name}, {$groupSession->date->format('jS M Y')} - {$groupSession->session->human_start_time}</h1>";
 
-            <table border='1' cellspacing='0' cellpadding='5'>
+        if($groupSession->session->weigh_only) {
+            $rtr .= '<h2>Weigh Only Session</h2>';
+        }
+
+        $rtr .= "<table border='1' cellspacing='0' cellpadding='5'>
             <thead>
                 <tr>
                     <th>#</th>
                     <th style='text-align: left'>Name</th>
                     <th style='text-align: left'>Email</th>
                     <th style='text-align: left'>Phone Number</th>
+                    <th style='text-align: left'>Attended?</th>
                 </tr>
             </thead>
             <tbody>";
@@ -84,10 +88,11 @@ class ApiHandler
                     <td>{$booking->member->name}</td>
                     <td>{$booking->member->email}</td>
                     <td>{$booking->member->phone}</td>
+                    <td></td>
                 </tr>";
         }
 
-        $rtr .= "</tbody></table></html>";
+        $rtr .= "</tbody></table></body></html>";
 
         return new Response($rtr);
     }

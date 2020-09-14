@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
-use App\Models\GroupSession;
-use App\Models\Session;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Relations\Relation;
 use JPeters\PageViewBuilder\Page;
 
 class GroupController extends Controller
@@ -24,13 +21,6 @@ class GroupController extends Controller
             'today' => Carbon::now()->format('jS M'),
             'now' => Carbon::now()->setTimezone('Europe/London')->format('Gi'),
             'group' => $group,
-            'dates' => $group->groupSessions()
-                ->orderBy('date')
-                ->with('session')
-                ->withCount('bookings')
-                ->where('date', '>=', Carbon::today())
-                ->get()
-                ->groupBy(fn(GroupSession $groupSession) => $groupSession->date->getTimestamp()),
         ]);
     }
 }

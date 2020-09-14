@@ -51,7 +51,8 @@ class SessionSeeder extends Seeder
             'day_id' => Day::THURSDAY,
             'start_at' => '12:15',
             'end_at' => '13:00',
-            'capacity' => 30,
+            'weigh_only' => true,
+            'capacity' => 7,
             'advance_weeks_to_create' => 3,
         ]);
     }

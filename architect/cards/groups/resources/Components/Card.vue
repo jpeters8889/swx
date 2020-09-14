@@ -13,21 +13,26 @@
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:-mx-2 lg:flex-wrap">
                             <div v-for="groupSession in groupSessions"
                                  class="p-2 lg:w-1/2">
-                                <div class="bg-gray-100 rounded p-2 flex justify-between">
-                                    <div class="flex flex-col mb-2">
-                                        <strong class="font-semibold">Time</strong>
-                                        {{ groupSession.session.human_start_time }} - {{
-                                            groupSession.session.human_end_time
-                                        }}
+                                <div class="bg-gray-100 rounded p-2 flex flex-col">
+                                    <div class="flex justify-between">
+                                        <div class="flex flex-col mb-2">
+                                            <strong class="font-semibold">Time</strong>
+                                            {{ groupSession.session.human_start_time }} - {{
+                                                groupSession.session.human_end_time
+                                            }}
+                                        </div>
+                                        <div class="flex flex-col mb-2 text-right">
+                                            <strong class="font-semibold">Bookings</strong>
+                                            <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
+                                               v-tooltip="'View List'"
+                                               @click="viewBookings(groupSession, group.name)">
+                                                {{ groupSession.bookings_count }}/{{
+                                                    groupSession.session.capacity
+                                                }}
+                                            </a>
+                                        </div>
                                     </div>
-                                    <div class="flex flex-col mb-2 text-right">
-                                        <strong class="font-semibold">Bookings</strong>
-                                        <a class="font-semibold text-blue-500 hover:underline cursor-pointer"
-                                           v-tooltip="'View List'"
-                                           @click="viewBookings(groupSession, group.name)">
-                                            {{ groupSession.bookings_count }}/{{ groupSession.session.capacity }}
-                                        </a>
-                                    </div>
+                                    <strong v-if="groupSession.session.weigh_only">(Weigh Only)<br/></strong>
                                 </div>
                             </div>
                         </div>

@@ -79,28 +79,4 @@ class GroupPageTest extends TestCase
     {
         $this->makeRequest()->assertSee($this->group->user->first_name);
     }
-
-    /** @test */
-    public function it_shows_the_group_dates()
-    {
-        $request = $this->makeRequest();
-
-        $sessionOneStart = Carbon::today();
-        $sessionTwoStart = Carbon::today()->addDays(3);
-
-        for($x = 0; $x < 3; $x++) {
-            $request->assertSee($sessionOneStart->addWeek()->format('l jS F'));
-            $request->assertSee($sessionTwoStart->addWeek()->format('l jS F'));
-        }
-    }
-
-    /** @test */
-    public function it_shows_the_group_times()
-    {
-        $request = $this->makeRequest();
-
-        $this->group->groupSessions->each(static function(GroupSession $groupSession) use ($request) {
-            $request->assertSee($groupSession->session->human_start_time);
-        });
-    }
 }

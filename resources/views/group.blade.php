@@ -91,35 +91,6 @@
             @endif
         </div>
 
-        @foreach($dates as $date)
-            <div class="flex flex-col border border-sw-red">
-                <div class="bg-sw-red text-lg p-2 font-semibold text-white">
-                    <h2>{{ $date[0]->date->format('l jS F') }}</h2>
-                </div>
-
-                <div class="flex flex-wrap m-1 leading-none">
-                    @forelse($date as $groupSession)
-                        <book-session
-                            today="{{ $today }}"
-                            :now="{{ $now }}"
-                            :group-session-id="{{ $groupSession->id }}"
-                            group-slug="{{ $group->slug }}"
-                            group-name="{{ $group->name }}"
-                            group-date="{{ $date[0]->date->format('jS M') }}"
-                            :session-start="{{ Carbon\Carbon::parse($groupSession->session->start_at)->format('Gi') }}"
-                            :new-member="{{ $groupSession->session->new_member_session ? 'true' : 'false' }}"
-                            :capacity="{{ $groupSession->session->capacity }}"
-                            :capacity-threshold="{{ $groupSession->session->capacity_threshold }}"
-                            :current-count="{{ $groupSession->bookings_count }}"
-                            :announcement="{{ $group->latestAnnouncement() ?? '[]'}}"
-                        >
-                            {{ $groupSession->session->human_start_time }}
-                        </book-session>
-                    @empty
-                        No sessions available on this day...
-                    @endforelse
-                </div>
-            </div>
-        @endforeach
+        <group-sessions :group-id="{{ $group->id }}" today="{{ $today }}" :now="{{ $now }}"></group-sessions>
     </div>
 @endsection

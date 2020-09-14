@@ -11,6 +11,7 @@ class HomeController
     {
         $groups = Group::query()
             ->with(['sessions', 'sessions.day', 'user'])
+            ->orderBy('order')
             ->orderBy('name')
             ->get();
 

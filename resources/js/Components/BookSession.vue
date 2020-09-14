@@ -3,18 +3,22 @@
         <div v-if="isBookable"
              class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center"
              :class="backgroundClass" @click="openModal">
-            <span class="mb-1"><slot></slot></span>
+            <span class="mb-1">{{ groupSession.session.human_start_time }}</span>
             <span class="text-xs text-center" v-html="tooltip"></span>
         </div>
 
         <modal v-if="showModal" @click.self="showModal = false">
-            <h2 class="text-xl text-center font-semibold leading-none mb-1">{{ groupName }}</h2>
+            <h2 class="text-xl text-center font-semibold leading-none mb-1">{{ group.name }}</h2>
             <h3 class="text-center leading-none mb-4">
-                {{ groupDate }},
-                <slot></slot>
+                {{ formatDate(group.date, 'dddd Do MMM') }},
+                {{ groupSession.session.human_start_time }} - {{ groupSession.session.human_end_time }}
             </h3>
 
             <template v-if="!loading">
+                <p class="text-lg text-sw-red text-center mb-2 font-semibold" v-if="groupSession.session.weigh_only">
+                    This session is a short weigh and go session, there will be no normal group activities.
+                </p>
+
                 <p class="text-lg text-center mb-2">
                     Please enter your name and phone number below to register for this session.
                 </p>
@@ -75,13 +79,13 @@
                     </span>
                 </div>
 
-                <p class="mb-3">
+                <p class="mb-3" v-if="!groupSession.session.weigh_only">
                     Anyone attending group (Including children) must book onto a session. Please only bring
                     children if absolutely necessary as spaces are taken from members to accommodate them.
                 </p>
 
                 <div class="flex justify-between leading-none text-xl">
-                    <a class="bg-sw-red rounded p-2 text-semibold text-white" :href="'/'+groupSlug">
+                    <a class="bg-sw-red rounded p-2 text-semibold text-white" :href="'/'+group.slug">
                         Cancel
                     </a>
 
@@ -90,7 +94,7 @@
                     </button>
                 </div>
 
-                <p v-if="announcement.announcement" class="mt-3 text-center font-semibold" v-text="announcement.announcement"></p>
+                <p v-if="announcement" class="mt-3 text-center font-semibold" v-text="announcement.announcement"></p>
             </template>
 
             <template v-if="loading">
@@ -105,51 +109,21 @@
 </template>
 
 <script>
+import * as moment from 'moment';
+
 export default {
     props: {
-        today: {
-            type: String,
-            required: true,
-        },
-        now: {
-            type: Number,
-            required: true,
-        },
-        sessionStart: {
-            type: Number,
-            required: true,
-        },
-        groupSessionId: {
-            type: Number,
-            required: true,
-        },
-        groupSlug: {
-            type: String,
-            required: true,
-        },
-        groupName: {
-            type: String,
-            required: true
-        },
-        groupDate: {
-            type: String,
-            required: true,
-        },
-        capacity: {
-            type: Number,
-            required: true,
-        },
-        capacityThreshold: {
-            type: Number,
-            required: true,
-        },
-        currentCount: {
-            type: Number,
-            required: true,
-        },
         announcement: {
-            default: null,
-        }
+            required: false,
+        },
+        group: {
+            required: true,
+            type: Object,
+        },
+        groupSession: {
+            required: true,
+            type: Object,
+        },
     },
 
     data: () => ({
@@ -175,8 +149,12 @@ export default {
     }),
 
     methods: {
+        formatDate(date, format = 'Do MMM') {
+            return moment(date).format(format);
+        },
+
         openModal() {
-            if (this.currentCount === this.capacity) {
+            if (this.groupSession.bookings_count === this.groupSession.session.capacity) {
                 app().error('Sorry, this Session is full, please choose another Session...')
                 return;
             }
@@ -192,7 +170,7 @@ export default {
             this.failed = false;
             this.loading = true;
 
-            app().request().post(`${this.groupSlug}/${this.groupSessionId}`, this.fields).then((response) => {
+            app().request().post(`${this.group.slug}/${this.groupSession.id}`, this.fields).then(() => {
                 window.location.href = '/thanks';
             }).catch((response) => {
                 Object.keys(response.data.errors).forEach((key) => {
@@ -213,11 +191,11 @@ export default {
 
     computed: {
         isBookable: function () {
-            if (this.today !== this.groupDate) {
+            if (this.today !== this.formatDate(this.group.date)) {
                 return true;
             }
 
-            if (this.sessionStart > this.now) {
+            if (this.formatDate('01-01-2020 ' + this.groupSession.session.session_start, 'Hmm') > this.now) {
                 return true
             }
 
@@ -225,11 +203,15 @@ export default {
         },
 
         backgroundClass: function () {
-            if (this.currentCount === this.capacity) {
+            if (this.groupSession.bookings_count === this.groupSession.session.capacity) {
                 return ['bg-sw-red', 'hover:bg-sw-red-80'];
             }
 
-            if (this.currentCount >= this.capacityThreshold) {
+            if (this.groupSession.session.weigh_only) {
+                return ['bg-sw-purple', 'hover:bg-sw-purple-80', 'text-white'];
+            }
+
+            if (this.groupSession.bookings_count >= this.groupSession.session.capacity_threshold) {
                 return ['bg-sw-blue', 'hover:bg-sw-blue-80'];
             }
 
@@ -237,19 +219,25 @@ export default {
         },
 
         tooltip: function () {
-            if (this.currentCount === this.capacity) {
+            if (this.groupSession.bookings_count === this.groupSession.session.capacity) {
                 return 'Fully Booked';
             }
 
-            if (this.currentCount >= this.capacityThreshold) {
-                return `Low Availability<br/>(${this.remainingSlots} spaces available)`;
+            let prefix = '';
+
+            if (this.groupSession.session.weigh_only) {
+                prefix = '(Weigh Only Session)<br/><br/>'
             }
 
-            return `Good Availability<br/>(${this.remainingSlots} spaces available)`;
+            if (this.groupSession.bookings_count >= this.groupSession.session.capacity_threshold) {
+                return `${prefix}Low Availability<br/>(${this.remainingSlots} spaces available)`;
+            }
+
+            return `${prefix}Good Availability<br/>(${this.remainingSlots} spaces available)`;
         },
 
         remainingSlots: function () {
-            return this.capacity - this.currentCount;
+            return this.groupSession.session.capacity - this.groupSession.bookings_count;
         }
     }
 }

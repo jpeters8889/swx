@@ -29,6 +29,9 @@
                                         {{ $booking->groupSession->group->name }}
                                         with {{ $booking->groupSession->group->user->first_name }}
                                     </strong>
+                                    @if($booking->groupSession->session->weigh_only)
+                                        <strong class="font-semibold">(Weigh Only Session)<br/></strong>
+                                    @endif
                                     {{ $booking->groupSession->date->format('D jS M') }},
                                     {{ $booking->groupSession->session->human_start_time }}
                                 </div>
@@ -64,6 +67,9 @@
                                     {{ $booking->groupSession->group->name }}
                                     with {{ $booking->groupSession->group->user->first_name }}
                                 </strong>
+                                @if($booking->groupSession->session->weigh_only)
+                                    <strong class="font-semibold">(Weigh Only Session)<br/></strong>
+                                @endif
                                 {{ $booking->groupSession->date->format('D jS M') }},
                                 {{ $booking->groupSession->session->human_start_time }}
                             </div>

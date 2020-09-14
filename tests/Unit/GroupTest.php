@@ -118,10 +118,10 @@ class GroupTest extends TestCase
     public function it_gets_the_latest_active_announcement()
     {
         factory(GroupAnnouncement::class)
-            ->create(['group_id' => 1, 'start_at' => Carbon::yesterday()]);
+            ->create(['group_id' => 1, 'start_at' => Carbon::now()->subWeek()]);
 
         $second = factory(GroupAnnouncement::class)
-            ->create(['group_id' => 1]);
+            ->create(['group_id' => 1, 'start_at' => Carbon::yesterday()]);
 
         $this->assertTrue($second->is($this->group->latestAnnouncement()));
     }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupSessionsController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\LookupController;
@@ -27,6 +28,8 @@ $router->group(['prefix' => 'lookup'], static function ($router) {
         $router->delete('/{id}', [LookupController::class, 'delete']);
     });
 });
+
+$router->get('/group-sessions/{groupId}', [GroupSessionsController::class, 'get']);
 
 $router->group(['prefix' => '{group}', 'middleware' => GroupExists::class], static function ($router) {
     $router->get('', [GroupController::class, 'list'])
