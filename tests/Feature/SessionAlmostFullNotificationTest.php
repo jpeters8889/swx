@@ -28,7 +28,7 @@ class SessionAlmostFullNotificationTest extends TestCase
         Notification::fake();
 
         factory(Group::class)->create(['name' => 'Test Group', 'user_id' => factory(User::class)->create(['name' => 'Jamie Peters'])]);
-        factory(Session::class)->create(['group_id' => 1, 'start_at' => '11:30', 'capacity' => 5]);
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '11:30', 'seats' => 5]);
 
         GroupSession::query()->create([
             'group_id' => 1,
@@ -63,6 +63,7 @@ class SessionAlmostFullNotificationTest extends TestCase
             'name' => 'Foo Bar',
             'email' => 'jamie@jamie-peters.co.uk',
             'phone' => '123456',
+            'requires_seat' => true,
         ]);
 
         Notification::assertSentTo(
@@ -125,9 +126,53 @@ class SessionAlmostFullNotificationTest extends TestCase
     }
 
     /** @test */
+    public function it_sends_a_weigh_and_go_email()
+    {
+        Session::query()->first()->update(['weigh_and_go_slots' => 5]);
+
+        $this->post("/test-group/1", [
+            'name' => 'Foo Bar',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+            'requires_seat' => false,
+        ]);
+
+        $this->post("/test-group/1", [
+            'name' => 'Fooo Bar',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+            'requires_seat' => false,
+        ]);
+
+        $this->post("/test-group/1", [
+            'name' => 'Foooo Bar',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+            'requires_seat' => false,
+        ]);
+
+        Notification::assertNotSentTo(User::query()->first(), SessionNearingCapacityNotification::class);
+
+        $this->post("/test-group/1", [
+            'name' => 'Jamie Peters',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+            'requires_seat' => false,
+        ]);
+
+        Notification::assertSentTo(
+            User::query()->first(),
+            SessionNearingCapacityNotification::class,
+            static function (SessionNearingCapacityNotification $notification, array $channels, User $user) {
+                return $notification->type === 'weigh';
+            }
+        );
+    }
+
+    /** @test */
     public function it_doesnt_send_when_the_group_is_past_the_threshold()
     {
-        factory(Session::class)->create(['group_id' => 1, 'start_at' => '12:30', 'capacity' => 20]);
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '12:30', 'seats' => 20]);
 
         GroupSession::query()->create([
             'group_id' => 1,
@@ -155,6 +200,7 @@ class SessionAlmostFullNotificationTest extends TestCase
             'name' => 'Jamie Peters',
             'email' => 'jamie@jamie-peters.co.uk',
             'phone' => '123456',
+            'requires_seat' => true,
         ]);
 
         // So we should have one notification

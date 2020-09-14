@@ -10,8 +10,10 @@ use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use RuntimeException;
 
 /**
  * @property Carbon date
@@ -19,11 +21,24 @@ use Illuminate\Database\Eloquent\Relations\Relation;
  * @property Group group
  * @property Collection<MemberBooking> bookings
  * @property Collection<MemberCancellation> cancellations
+ * @property int seats_taken
+ * @property int weigh_slots_taken
  */
 class GroupSession extends Model
 {
     protected $appends = [
-        'type'
+        'type',
+        'seats_taken',
+        'weigh_slots_taken',
+        'has_seat_available',
+        'has_weigh_available',
+    ];
+
+    protected $casts = [
+        'seats_taken' => 'int',
+        'weigh_slots_taken' => 'int',
+        'has_seat_available' => 'bool',
+        'has_weigh_available' => 'bool',
     ];
 
     protected $guarded = [];
@@ -34,13 +49,26 @@ class GroupSession extends Model
 
     /**
      * @param Member $member
+     * @param bool $requireSeat
      * @throws MemberAlreadyOnSessionException
-     * @throws SessionFullException
      * @throws MemberSameDayBookingException
+     * @throws SessionFullException
      */
-    public function bookMember(Member $member): void
+    public function bookMember(Member $member, $requireSeat = true): void
     {
-        if (!$this->hasAvailableSlots()) {
+        $check = 'has_seats';
+        $method = 'hasAvailableSeat';
+
+        if (!$requireSeat) {
+            $check = 'has_weigh_and_go';
+            $method = 'hasAvailableWeighSlot';
+        }
+
+        if (!$this->session->$check) {
+            throw new RuntimeException('Incorrect booking type');
+        }
+
+        if (!$this->$method()) {
             throw new SessionFullException('No slots available in this session');
         }
 
@@ -52,10 +80,38 @@ class GroupSession extends Model
             throw new MemberSameDayBookingException('Member already booked onto a session on this day');
         }
 
-        $this->bookings()->create(['member_id' => $member->id]);
+        $this->bookings()->create(['member_id' => $member->id, 'requires_seat' => $requireSeat]);
     }
 
-    public function getTypeAttribute()
+    public function getSeatsTakenAttribute(): int
+    {
+        return $this->bookings()->where('requires_seat', true)->count();
+    }
+
+    public function getWeighSlotsTakenAttribute(): int
+    {
+        return $this->bookings()->where('requires_seat', false)->count();
+    }
+
+    public function getHasSeatAvailableAttribute(): bool
+    {
+        if (!$this->session->has_seats) {
+            return false;
+        }
+
+        return $this->seats_taken < $this->session->seats;
+    }
+
+    public function getHasWeighAvailableAttribute(): bool
+    {
+        if (!$this->session->has_weigh_and_go) {
+            return false;
+        }
+
+        return $this->weigh_slots_taken < $this->session->weigh_and_go_slots;
+    }
+
+    public function getTypeAttribute(): string
     {
         $now = Carbon::now();
 
@@ -70,14 +126,23 @@ class GroupSession extends Model
         return 'past';
     }
 
-    public function group()
+    public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
     }
 
-    public function hasAvailableSlots(): bool
+    public function hasAvailableSeat(): bool
     {
-        return $this->bookings()->count() < $this->session->capacity;
+        return $this->bookings()
+                ->where('requires_seat', true)
+                ->count() < $this->session->seats;
+    }
+
+    public function hasAvailableWeighSlot(): bool
+    {
+        return $this->bookings()
+                ->where('requires_seat', false)
+                ->count() < $this->session->weigh_and_go_slots;
     }
 
     public function hasMember($memberId): bool
@@ -87,17 +152,17 @@ class GroupSession extends Model
             ->exists();
     }
 
-    public function isFull(): bool
+    public function isFull($seats): bool
     {
-        return !$this->hasAvailableSlots();
+        return $seats ? $this->hasAvailableSeat() : $this->hasAvailableWeighSlot();
     }
 
-    public function bookings()
+    public function bookings(): HasMany
     {
         return $this->hasMany(MemberBooking::class);
     }
 
-    public function session()
+    public function session(): BelongsTo
     {
         return $this->belongsTo(Session::class);
     }

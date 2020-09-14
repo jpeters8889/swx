@@ -29,7 +29,7 @@ class SessionFullyBookedNotificationTest extends TestCase
         Notification::fake();
 
         factory(Group::class)->create(['name' => 'Test Group', 'user_id' => factory(User::class)->create(['name' => 'Jamie Peters'])]);
-        factory(Session::class)->create(['group_id' => 1, 'start_at' => '11:30', 'capacity' => 5]);
+        factory(Session::class)->create(['group_id' => 1, 'start_at' => '11:30', 'seats' => 5]);
 
         GroupSession::query()->create([
             'group_id' => 1,
@@ -62,6 +62,7 @@ class SessionFullyBookedNotificationTest extends TestCase
             'name' => 'Foo Bar',
             'email' => 'jamie@jamie-peters.co.uk',
             'phone' => '123456',
+            'requires_seat' => true
         ]);
 
         Notification::assertSentTo(
@@ -121,46 +122,5 @@ class SessionFullyBookedNotificationTest extends TestCase
                 return !in_array(false, $assertions, true);
             }],
         ];
-    }
-
-    /** @test */
-    public function it_doesnt_send_when_the_group_is_past_the_threshold()
-    {
-        factory(Session::class)->create(['group_id' => 1, 'start_at' => '12:30', 'capacity' => 20]);
-
-        GroupSession::query()->create([
-            'group_id' => 1,
-            'session_id' => 2,
-            'date' => Carbon::parse('2020-08-01'),
-        ]);
-
-        // We've booked 15 members on
-        Member::query()->truncate();
-        factory(Member::class, 15)->create();
-
-        Member::all()->each(static function(Member $member) {
-            MemberBooking::query()->create(['group_session_id' => 2, 'member_id' => $member->id]);
-        });
-
-        // Number 16 will trigger the notification
-        $this->post("/test-group/2", [
-            'name' => 'Foo Bar',
-            'email' => 'jamie@jamie-peters.co.uk',
-            'phone' => '123456',
-        ]);
-
-        // Number 17 shouldn't
-        $this->post("/test-group/2", [
-            'name' => 'Jamie Peters',
-            'email' => 'jamie@jamie-peters.co.uk',
-            'phone' => '123456',
-        ]);
-
-        // So we should have one notification
-        Notification::assertSentToTimes(
-            User::query()->first(),
-            SessionNearingCapacityNotification::class,
-            1
-        );
     }
 }

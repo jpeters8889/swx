@@ -16,7 +16,7 @@ class SessionFullyBookedNotification extends Notification implements ShouldQueue
 
     public GroupSession $groupSession;
 
-    public function __construct(GroupSession $groupSession)
+    public function __construct(GroupSession $groupSession, $type)
     {
         $this->groupSession = $groupSession;
     }

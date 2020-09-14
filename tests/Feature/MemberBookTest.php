@@ -63,24 +63,55 @@ class MemberBookTest extends TestCase
     /** @test */
     public function it_errors_if_there_isnt_an_email()
     {
-        $this->withoutExceptionHandling();
         $this->makeRequest('foo', '', '123')->assertStatus(422);
     }
 
     /** @test */
     public function it_errors_if_there_isnt_a_phone()
     {
-        $this->withoutExceptionHandling();
         $this->makeRequest('foo', 'foo@foo.com', '')->assertStatus(422);
     }
 
     /** @test */
-    public function it_errors_if_the_session_is_full()
+    public function it_errors_if_there_isnt_a_seat_set()
     {
-        MemberBooking::query()->create(['member_id' => factory(Member::class)->create(), 'group_session_id' => 1]);
-        Session::query()->first()->update(['capacity' => 1]);
+        $this->makeRequest('foo', 'foo@foo.com', '123', 1, '')->assertStatus(422);
+    }
+
+    /** @test */
+    public function it_errors_if_there_is_seat_isnt_a_boolean()
+    {
+        $this->makeRequest('foo', 'foo@foo.com', '123', 1, 'foo')->assertStatus(422);
+    }
+
+    /** @test */
+    public function it_errors_if_trying_to_book_a_seat_and_the_session_has_no_seats_available()
+    {
+        $this->withoutExceptionHandling();
+
+        MemberBooking::query()->create([
+            'member_id' => factory(Member::class)->create(),
+            'group_session_id' => 1,
+        ]);
+
+        Session::query()->first()->update(['seats' => 1]);
 
         $this->makeRequest()->assertStatus(422);
+    }
+
+    /** @test */
+    public function it_errors_if_trying_to_book_weigh_and_go_and_the_session_is_full()
+    {
+        MemberBooking::query()->create([
+            'member_id' => factory(Member::class)->create(),
+            'group_session_id' => 1,
+            'requires_seat' => false,
+        ]);
+
+        Session::query()->first()->update(['weigh_and_go_slots' => 1]);
+
+        $this->makeRequest('foo', 'foo@foo.com', '123456', 1, false)
+            ->assertStatus(422);
     }
 
     /** @test */
@@ -145,20 +176,6 @@ class MemberBookTest extends TestCase
     }
 
     /** @test */
-    public function it_errors_when_the_session_is_full()
-    {
-        $this->makeRequest();
-
-        Session::query()->first()->update(['capacity' => 1]);
-
-        $this->makeRequest()->assertStatus(422)->assertJson([
-            'errors' => [
-                'sessionFull' => 'No slots available in this session'
-            ],
-        ]);
-    }
-
-    /** @test */
     public function it_errors_when_the_member_is_already_booked_on_the_session()
     {
         $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456');
@@ -197,6 +214,7 @@ class MemberBookTest extends TestCase
     /** @test */
     public function it_allows_a_member_to_book_onto_sessions_the_next_week()
     {
+        $this->withoutExceptionHandling();
         factory(Session::class)->create(['group_id' => 1, 'start_at' => '19:00']);
 
         GroupSession::query()->create([
@@ -210,12 +228,13 @@ class MemberBookTest extends TestCase
         $this->makeRequest('Jamie', 'jamie@jamie-peters.co.uk', '123456', 2)->assertStatus(200);
     }
 
-    protected function makeRequest($name = null, $email = null, $phone = null, $sessionId = 1)
+    protected function makeRequest($name = null, $email = null, $phone = null, $sessionId = 1, $seat = true)
     {
         return $this->post("/{$this->group->slug}/{$sessionId}", [
             'name' => $name ?? $this->faker->name,
             'email' => $email ?? $this->faker->email,
             'phone' => $phone ?? $this->faker->phoneNumber,
+            'requires_seat' => $seat,
         ]);
     }
 }

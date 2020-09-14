@@ -80,7 +80,7 @@ class GroupTest extends TestCase
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 4, 'start_at' => '17:00']);
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 2, 'start_at' => '09:30']);
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 2, 'start_at' => '11:00']);
-        factory(Session::class)->create(['group_id' => 1, 'day_id' => 6, 'start_at' => '11:00', 'new_member_session' => 1]);
+        factory(Session::class)->create(['group_id' => 1, 'day_id' => 6, 'start_at' => '11:00']);
 
         $this->group->fresh(['sessions']);
 
@@ -101,7 +101,7 @@ class GroupTest extends TestCase
 
         $this->assertEquals(['9:30am', '11am'], $sessionList['Monday']);
         $this->assertEquals(['5pm'], $sessionList['Wednesday']);
-        $this->assertEquals(['11am*'], $sessionList['Friday']);
+        $this->assertEquals(['11am'], $sessionList['Friday']);
     }
 
     /** @test */
@@ -118,10 +118,10 @@ class GroupTest extends TestCase
     public function it_gets_the_latest_active_announcement()
     {
         factory(GroupAnnouncement::class)
-            ->create(['group_id' => 1, 'start_at' => Carbon::yesterday()]);
+            ->create(['group_id' => 1, 'start_at' => Carbon::now()->subDays(4)]);
 
         $second = factory(GroupAnnouncement::class)
-            ->create(['group_id' => 1]);
+            ->create(['start_at' => Carbon::yesterday(), 'group_id' => 1]);
 
         $this->assertTrue($second->is($this->group->latestAnnouncement()));
     }

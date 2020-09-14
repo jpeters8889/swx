@@ -30,7 +30,7 @@ class HomePageTest extends TestCase
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 4, 'start_at' => '17:00']);
         factory(Session::class)->create(['group_id' => 1, 'day_id' => 2, 'start_at' => '09:30']);
         factory(Session::class)->create(['group_id' => 2, 'day_id' => 2, 'start_at' => '11:00']);
-        factory(Session::class)->create(['group_id' => 2, 'day_id' => 6, 'start_at' => '11:00', 'new_member_session' => 1]);
+        factory(Session::class)->create(['group_id' => 2, 'day_id' => 6, 'start_at' => '11:00']);
     }
 
     /** @test */

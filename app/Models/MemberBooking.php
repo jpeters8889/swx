@@ -15,6 +15,7 @@ class MemberBooking extends Model
 
     protected $casts = [
         'cancelable' => 'bool',
+        'requires_seat' => 'bool',
     ];
 
     protected $guarded = [];

@@ -43,10 +43,6 @@ class Group extends Model
                     $format = 'ga';
                 }
 
-                if ($session->new_member_session) {
-                    $format .= '\*';
-                }
-
                 if (array_key_exists($session->day->day, $sessions)) {
                     $sessions[$session->day->day][] = $startAt->format($format);
                     return;
@@ -75,7 +71,7 @@ class Group extends Model
         return $this->announcements()
             ->whereDate('start_at', '<', Carbon::now())
             ->whereDate('end_at', '>=', Carbon::now())
-            ->latest()
+            ->orderByDesc('start_at')
             ->first();
     }
 

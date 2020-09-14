@@ -15,7 +15,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Str;
-use Mockery\Matcher\Not;
 use Tests\TestCase;
 
 class BookingConfirmedNotificationTest extends TestCase
@@ -43,6 +42,7 @@ class BookingConfirmedNotificationTest extends TestCase
             'name' => 'Foo Bar',
             'email' => 'jamie@jamie-peters.co.uk',
             'phone' => '123456',
+            'requires_seat' => true,
         ]);
     }
 
@@ -99,8 +99,8 @@ class BookingConfirmedNotificationTest extends TestCase
                     Str::contains($introLines[0], $notification->groupSession->group->user->first_name),
                     Str::contains($introLines[0], $notification->groupSession->date->format('l jS F Y')),
                     Str::contains($introLines[0], $notification->groupSession->session->human_start_time),
-//                    $message[1] === "Thanks, {$notification->groupSession->group->user->first_name}",
-                    $introLines[1] === 'If you need to cancel your booking or view any of your previous bookings please use the link below.',
+                    $introLines[1] === 'You have also booked a seat at the session with your booking, if you change your mind and no longer wish to stay at group then please cancel and book a weigh and go slot instead.',
+                    $introLines[2] === 'If you need to cancel your booking or view any of your previous bookings please use the link below.',
                 ];
 
                 return !in_array(false, $assertions, true);
@@ -128,5 +128,27 @@ class BookingConfirmedNotificationTest extends TestCase
                 return $outroLines[0] === "Thanks, {$notification->groupSession->group->user->first_name}";
             }],
         ];
+    }
+
+    /** @test */
+    public function it_changes_the_wording_when_booking_a_weigh_only_slot()
+    {
+        $this->post("/test-group/1", [
+            'name' => 'Jamie',
+            'email' => 'jamie@jamie-peters.co.uk',
+            'phone' => '123456',
+            'requires_seat' => false,
+        ]);
+
+        Notification::assertSentTo(
+            Member::query()->latest()->first(),
+            BookingConfirmedNotification::class,
+            static function (BookingConfirmedNotification $notification, array $channels, Member $member) {
+                $notification->requiresSeat = false;
+                $introLines = $notification->toMail($member)->introLines;
+
+                return $introLines[1] === 'Please note, you have only booked a weigh and go slot, which means you will not be able to stay at group.';
+            }
+        );
     }
 }

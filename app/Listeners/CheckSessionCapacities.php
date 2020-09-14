@@ -12,13 +12,25 @@ class CheckSessionCapacities
     {
         $groupSession = $event->groupSession();
 
-        if($groupSession->isFull()) {
-            $groupSession->group->user->notify(new SessionFullyBookedNotification($groupSession));
+        $check = 'hasAvailableSeat';
+        $type = 'seats';
+        $threshold = 'seats_threshold';
+
+        if(!$event->requiresSeat()) {
+            $check = 'hasAvailableWeighSlot';
+            $type = 'weigh';
+            $threshold = 'weigh_capacity_threshold';
+        }
+
+        $count = $groupSession->bookings()->where('requires_seat', $type === 'seats')->count();
+
+        if(!$groupSession->$check()) {
+            $groupSession->group->user->notify(new SessionFullyBookedNotification($groupSession, $type));
             return;
         }
 
-        if($groupSession->bookings->count() === $groupSession->session->capacity_threshold) {
-            $groupSession->group->user->notify(new SessionNearingCapacityNotification($groupSession));
+        if($count === $groupSession->session->$threshold) {
+            $groupSession->group->user->notify(new SessionNearingCapacityNotification($groupSession, $type));
         }
     }
 }

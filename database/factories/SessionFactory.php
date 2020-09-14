@@ -12,7 +12,10 @@ $factory->define(Session::class, function (Faker $faker) {
         'day_id' => $faker->numberBetween(1, 7),
         'start_at' => '10:00',
         'end_at' => '11:00',
-        'capacity' => random_int(10, 30),
+        'has_seats' => true,
+        'has_weigh_and_go' => true,
+        'seats' => random_int(10, 30),
+        'weigh_and_go_slots' => random_int(5, 10),
         'first_session_date' => Carbon::today(),
     ];
 });

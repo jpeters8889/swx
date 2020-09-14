@@ -14,10 +14,12 @@ class SessionNearingCapacityNotification extends Notification implements ShouldQ
     use Queueable;
 
     public GroupSession $groupSession;
+    public string $type;
 
-    public function __construct(GroupSession $groupSession)
+    public function __construct(GroupSession $groupSession, string $type)
     {
         $this->groupSession = $groupSession;
+        $this->type = $type;
     }
 
     public function toMail(User $user)

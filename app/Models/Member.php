@@ -7,6 +7,7 @@ use Illuminate\Notifications\Notifiable;
 
 /**
  * @property GroupSession groupSession
+ * @property int id
  */
 class Member extends Model
 {

@@ -10,17 +10,27 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * @property Carbon first_session_date
  * @property string human_start_time
- * @property int capacity_threshold
+ * @property int seats_threshold
+ * @property int weigh_capacity_threshold
+ * @property bool has_seats
+ * @property int seats
+ * @property bool has_weigh_and_go
+ * @property int weigh_and_go_slots
  */
 class Session extends Model
 {
     protected $appends = [
         'human_start_time',
         'human_end_time',
+        'seats_threshold',
+        'weigh_capacity_threshold',
     ];
 
     protected $casts = [
-        'capacity_threshold' => 'int',
+        'seats_threshold' => 'int',
+        'weigh_capacity_threshold' => 'int',
+        'has_seats' => 'bool',
+        'has_weigh_and_go' => 'bool',
     ];
 
     protected $dates = [
@@ -64,9 +74,14 @@ class Session extends Model
         return $this->formatForHuman($this->end_at);
     }
 
-    public function getCapacityThresholdAttribute()
+    public function getSeatsThresholdAttribute()
     {
-        return (int) round($this->capacity * 0.8);
+        return (int) round($this->seats * 0.8);
+    }
+
+    public function getWeighCapacityThresholdAttribute()
+    {
+        return (int) round($this->weigh_and_go_slots * 0.8);
     }
 
     public function group()

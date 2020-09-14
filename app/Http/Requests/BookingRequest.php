@@ -20,6 +20,7 @@ class BookingRequest extends FormRequest
             'name' => 'required',
             'email' => ['required', 'email'],
             'phone' => 'required',
+            'requires_seat' => ['required', 'bool']
         ];
     }
 

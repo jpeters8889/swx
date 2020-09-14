@@ -15,7 +15,6 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class GroupSessionsTest extends TestCase
@@ -56,15 +55,27 @@ class GroupSessionsTest extends TestCase
     }
 
     /** @test */
-    public function it_can_check_the_capacity()
+    public function it_can_check_the_remaining_seats()
     {
-        $this->session->update(['capacity' => 1]);
+        $this->session->update(['seats' => 1]);
 
-        $this->assertTrue($this->groupSession->hasAvailableSlots());
+        $this->assertTrue($this->groupSession->hasAvailableSeat());
 
-        $this->groupSession->bookMember(factory(Member::class)->create());
+        $this->groupSession->bookMember(factory(Member::class)->create(), true);
 
-        $this->assertFalse($this->groupSession->fresh()->hasAvailableSlots());
+        $this->assertFalse($this->groupSession->fresh()->hasAvailableSeat());
+    }
+
+    /** @test */
+    public function it_can_check_the_remaining_wiegh_slots()
+    {
+        $this->session->update(['weigh_and_go_slots' => 1]);
+
+        $this->assertTrue($this->groupSession->hasAvailableWeighSlot());
+
+        $this->groupSession->bookMember(factory(Member::class)->create(), false);
+
+        $this->assertFalse($this->groupSession->fresh()->hasAvailableWeighSlot());
     }
 
     /** @test */
@@ -78,9 +89,9 @@ class GroupSessionsTest extends TestCase
     }
 
     /** @test */
-    public function it_errors_when_attempting_to_add_members_when_the_capacity_is_full()
+    public function it_errors_when_attempting_to_add_seated_members_when_the_capacity_is_full()
     {
-        $this->session->update(['capacity' => 1]);
+        $this->session->update(['seats' => 1]);
 
         $this->groupSession->bookMember(factory(Member::class)->create());
 
@@ -91,7 +102,20 @@ class GroupSessionsTest extends TestCase
     }
 
     /** @test */
-    public function it_errors_when_trying()
+    public function it_errors_when_attempting_to_add_weigh_members_when_the_capacity_is_full()
+    {
+        $this->session->update(['weigh_and_go_slots' => 1]);
+
+        $this->groupSession->bookMember(factory(Member::class)->create(), false);
+
+        $this->expectException(SessionFullException::class);
+        $this->expectExceptionMessage('No slots available in this session');
+
+        $this->groupSession->fresh()->bookMember(factory(Member::class)->create(), false);
+    }
+
+    /** @test */
+    public function it_errors_when_trying_to_book_a_member_that_is_already_booked_on_the_session()
     {
         $member = factory(Member::class)->create();
 
@@ -114,7 +138,7 @@ class GroupSessionsTest extends TestCase
     }
 
     /** @test */
-    public function it_members_can_be_cancelled()
+    public function members_can_be_cancelled()
     {
         $member = factory(Member::class)->create();
         $this->assertEmpty($this->groupSession->cancellations);

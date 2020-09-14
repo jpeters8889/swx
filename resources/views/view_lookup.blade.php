@@ -36,6 +36,10 @@
                                     <strong class="font-semibold">Booked Member Name</strong>
                                     {{ $booking->member->name }}
                                 </div>
+                                <div class="flex flex-col">
+                                    <strong class="font-semibold">Seat Required</strong>
+                                    {{ $booking->requires_seat ? 'Yes' : 'No' }}
+                                </div>
                             </div>
                             <div class="p-2">
                                 <cancel-session :id="{{ $booking->id }}" token="{{ $key }}"></cancel-session>
@@ -70,6 +74,10 @@
                             <div class="flex flex-col">
                                 <strong class="font-semibold">Booked Member Name</strong>
                                 {{ $booking->member->name }}
+                            </div>
+                            <div class="flex flex-col">
+                                <strong class="font-semibold">Seat Required</strong>
+                                {{ $booking->requires_seat ? 'Yes' : 'No' }}
                             </div>
                         </li>
                     @empty
