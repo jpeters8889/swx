@@ -14,6 +14,7 @@ class CreateSessions extends Command
     {
         Session::query()
             ->where('day_id', Carbon::now()->dayOfWeek + 1)
+            ->where('live', true)
             ->get()
             ->each(static function (Session $session) {
                 $now = Carbon::now();

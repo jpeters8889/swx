@@ -12,8 +12,8 @@
 
                         <div class="flex flex-col lg:flex-row lg:justify-between lg:-mx-2 lg:flex-wrap">
                             <div v-for="groupSession in groupSessions"
-                                 class="p-2 lg:w-1/2">
-                                <div class="bg-gray-100 rounded p-2 flex flex-col">
+                                 class="p-2 lg:w-1/2" v-if="groupSession.session.live || groupSession.bookings_count > 0">
+                                <div class="rounded p-2 flex flex-col" :class="groupSession.session.live ? 'bg-gray-100' : 'bg-red-500'">
                                     <div class="flex justify-between">
                                         <div class="flex flex-col mb-2">
                                             <strong class="font-semibold">Time</strong>

@@ -14,6 +14,11 @@ class BookingRequest extends FormRequest
         return GroupSession::query()->firstWhere('id', $this->route('session'));
     }
 
+    protected function passedValidation()
+    {
+        abort_if(!$this->groupSession()->session->live, 422);
+    }
+
     public function rules()
     {
         return [

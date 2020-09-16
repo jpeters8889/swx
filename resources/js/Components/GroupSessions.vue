@@ -9,7 +9,7 @@
                 <div class="flex flex-wrap m-1 leading-none">
                     <template v-for="groupSession in dates[timestamp]">
                         <book-session :group="group" :group-session="groupSession"
-                                      v-if="isBookable(groupSession.date, groupSession.session.start_at)"/>
+                                      v-if="isBookable(groupSession)"/>
                     </template>
                 </div>
             </div>
@@ -64,12 +64,16 @@ export default {
             return moment.unix(timestamp).format(format);
         },
 
-        isBookable(date, sessionStart) {
-            if (this.today !== this.formatDate(date)) {
+        isBookable(groupSession) {
+            if (!groupSession.session.live) {
+                return false;
+            }
+
+            if (this.today !== this.formatDate(groupSession.date)) {
                 return true;
             }
 
-            if (this.formatDate('01-01-2020 ' + sessionStart, 'Hmm') > this.now) {
+            if (this.formatDate('01-01-2020 ' + groupSession.session.start_at, 'Hmm') > this.now) {
                 return true
             }
 

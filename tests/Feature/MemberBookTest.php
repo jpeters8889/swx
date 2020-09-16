@@ -84,6 +84,14 @@ class MemberBookTest extends TestCase
     }
 
     /** @test */
+    public function it_errors_if_the_session_isnt_live()
+    {
+        Session::query()->first()->update(['live' => false]);
+
+        $this->makeRequest()->assertStatus(422);
+    }
+
+    /** @test */
     public function it_adds_the_member_to_the_database()
     {
         $groupSession = GroupSession::query()->first();

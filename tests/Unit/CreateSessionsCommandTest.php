@@ -62,4 +62,24 @@ class CreateSessionsCommandTest extends TestCase
 
         $this->assertTrue(Carbon::now()->addWeeks(3)->isSameDay($newestSession->date));
     }
+
+    /** @test */
+    public function it_doesnt_create_sessions_if_the_Session_isnt_live()
+    {
+        $this->session->update(['live' => false]);
+
+        $this->assertCount(3, $this->session->groupSessions);
+
+        $this->artisan('sw:create-sessions');
+        $this->session->refresh();
+
+        $this->assertCount(3, $this->session->groupSessions);
+
+        TestTime::addWeek();
+
+        $this->artisan('sw:create-sessions');
+        $this->session->refresh();
+
+        $this->assertCount(3, $this->session->groupSessions);
+    }
 }
