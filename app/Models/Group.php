@@ -30,6 +30,7 @@ class Group extends Model
         $sessions = [];
 
         $this->sessions()
+            ->where('live', true)
             ->orderBy('group_id')
             ->orderBy('day_id')
             ->orderBy('start_at')
