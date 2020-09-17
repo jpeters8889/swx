@@ -15,7 +15,7 @@
 
 <div class="w-full px-4 flex-1 flex flex-col max-w-modal mx-auto" id="app">
     <div class="bg-sw-red p-2 flex flex-col text-white font-semibold text-center sm:items-center">
-        <h1 class="text-xl mb-2 sm:mb-0">Slimming World Booking</h1>
+        <h1 class="text-xl mb-2 sm:mb-0">Slimming World at The Brittles</h1>
         <h2>Book Online</h2>
     </div>
 

@@ -2,8 +2,8 @@
 
 return [
     'title' => [
-        'short' => 'Slimming World - Book Online',
-        'full' => 'Slimming World - Book Online',
+        'short' => 'Slimming World at The Brittles',
+        'full' => 'Slimming World at The Brittles',
         'separator' => '|',
     ],
 
