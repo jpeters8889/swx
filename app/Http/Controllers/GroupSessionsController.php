@@ -28,6 +28,9 @@ class GroupSessionsController extends Controller
                 ->where('date', '>=', Carbon::today())
                 ->get()
                 ->groupBy(fn(GroupSession $groupSession) => $groupSession->date->getTimestamp())
+                ->each(function ($item) {
+                    $item->sortBy(fn(GroupSession $groupSession) => $groupSession->session->start_at);
+                }),
         ];
     }
 }
