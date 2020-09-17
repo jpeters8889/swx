@@ -226,7 +226,7 @@ export default {
             let prefix = '';
 
             if (this.groupSession.session.weigh_only) {
-                prefix = '(Weigh Only Session)<br/><br/>'
+                prefix = '(Weigh and Go)<br/><br/>'
             }
 
             if (this.groupSession.bookings_count >= this.groupSession.session.capacity_threshold) {
