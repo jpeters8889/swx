@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="flex">
         <div v-if="isBookable"
              class="rounded p-2 m-1 cursor-pointer transition-bg block flex flex-col justify-center items-center"
              :class="backgroundClass" @click="openModal">
