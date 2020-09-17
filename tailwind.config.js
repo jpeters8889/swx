@@ -8,6 +8,8 @@ const colours = {
         'red-dark': '#be0626',
         green: '#64b326',
         'green-80': 'rgba(100,179,38,0.9)',
+        'green-60': 'rgba(100,179,38,0.6)',
+        'green-40': 'rgba(100,179,38,0.4)',
         purple: '#310757',
         'purple-dark': '#39303c',
         pink: '#ce2a60',

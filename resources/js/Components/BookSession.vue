@@ -208,7 +208,7 @@ export default {
             }
 
             if (this.groupSession.session.weigh_only) {
-                return ['bg-sw-purple', 'hover:bg-sw-purple-80', 'text-white'];
+                return ['bg-sw-green-60', 'hover:bg-sw-green-40'];
             }
 
             if (this.groupSession.bookings_count >= this.groupSession.session.capacity_threshold) {
