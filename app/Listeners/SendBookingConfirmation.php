@@ -9,6 +9,10 @@ class SendBookingConfirmation
 {
     public function handle(MemberBookedOntoSession $event)
     {
+        if ($event->member()->email === 'alisondwheatley@gmail.com') {
+            return;
+        }
+
         $event->member()->notify(new BookingConfirmedNotification($event->groupSession()));
     }
 }
