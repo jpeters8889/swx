@@ -10,7 +10,7 @@
         <modal v-if="showModal" @click.self="showModal = false">
             <h2 class="text-xl text-center font-semibold leading-none mb-1">{{ group.name }}</h2>
             <h3 class="text-center leading-none mb-4">
-                {{ formatDate(group.date, 'dddd Do MMM') }},
+                {{ formatDate(groupSession.date, 'dddd Do MMM') }},
                 {{ groupSession.session.human_start_time }} - {{ groupSession.session.human_end_time }}
             </h3>
 
