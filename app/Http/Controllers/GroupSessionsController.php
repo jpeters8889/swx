@@ -27,6 +27,7 @@ class GroupSessionsController extends Controller
                 ->withCount('bookings')
                 ->where('date', '>=', Carbon::today())
                 ->get()
+                ->reject(fn(GroupSession $groupSession) => $groupSession->hide)
                 ->groupBy(fn(GroupSession $groupSession) => $groupSession->date->getTimestamp())
                 ->map(function ($items) {
                     return $items->sortBy(fn(GroupSession $groupSession) => (int)str_replace(':', '', $groupSession->session->start_at))

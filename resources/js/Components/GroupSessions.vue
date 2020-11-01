@@ -65,6 +65,10 @@ export default {
         },
 
         isBookable(groupSession) {
+            if (groupSession.hide) {
+                return false;
+            }
+
             if (!groupSession.session.live) {
                 return false;
             }

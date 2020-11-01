@@ -3,8 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Group;
-use App\Models\GroupSession;
-use App\Models\Session;
 use Illuminate\Database\Eloquent\Builder;
 use JPeters\PageViewBuilder\Page;
 
