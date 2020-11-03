@@ -1,3 +1,3 @@
-<title>{{ $page->title }}</title>
+<title>{{ $page->title ?? 'Slimming World at The Brittles' }}</title>
 
-<link rel="canonical" href="{{ isset($page) ? $page->url : config('app.url') }}"/>
+<link rel="canonical" href="{{ $page->url ?? config('app.url') }}"/>
