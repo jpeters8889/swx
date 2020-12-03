@@ -21,6 +21,10 @@ class CreateSessions extends Command
 
                 $newDate = $now->addWeeks($session->advance_weeks_to_create + 1);
 
+                if (in_array($newDate->format('d/m'), config('sw.dont_create'), true)) {
+                    return;
+                }
+
                 if ($session->groupSessions()->whereDate('date', $newDate)->exists()) {
                     return;
                 }
