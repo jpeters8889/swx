@@ -24,17 +24,17 @@
                         Due to Cheshire going into Tier 3 we can only run our groups as 'venue virtual' - this means we
                         will have our venues open for you to weigh only. We have several 15 minute timeslots available
                         at the times our usual groups will run, if you book into a slot please make sure you only arrive
-                        for your timeslot as numbers in each slot are extremely limited.
+                        for your booked slot as numbers in each slot are extremely limited.
                     </p>
 
                     <p class="mt-2">
-                        We will be running groups so that you come in, pick up any items from our Shop, pay, weigh, and
+                        We will be running groups so that you come in, pick up any items from our shop, pay, weigh, and
                         then you must leave the building, there will be no IMAGE therapy taking place in the physical
                         group.
                     </p>
 
                     <p class="mt-2">
-                        We will be instead running our normal IMAGE therapy will take place from the comfort of your
+                        We will be instead running our normal IMAGE therapy sessions from the comfort of your
                         home via Zoom after the weigh sessions have ended and I have got back to my house!
 
                         <strong>Tuesday Morning</strong> - 11am
