@@ -20,7 +20,7 @@
                 </div>
 
                 <div class="p-2">
-                    <p class="mt-2">
+                    <p>
                         Due to Cheshire going into Tier 3 we can only run our groups as 'venue virtual' - this means we
                         will have our venues open for you to weigh only. We have several 15 minute timeslots available
                         at the times our usual groups will run, if you book into a slot please make sure you only arrive
