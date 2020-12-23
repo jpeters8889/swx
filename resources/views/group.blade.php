@@ -14,7 +14,41 @@
                 <a href="/" class="text-sw-red font-semibold hover:underline">Back to groups...</a>
             </div>
 
-            <accordion>
+            <div class="border border-sw-blue">
+                <div class="p-2 bg-sw-blue text-white text-semibold">
+                    Tier 3 Restrictions - Please Read!
+                </div>
+
+                <div class="p-2">
+                    <p class="mt-2">
+                        Due to Cheshire going into Tier 3 we can only run our groups as 'venue virtual' - this means we
+                        will have our venues open for you to weigh only. We have several 15 minute timeslots available
+                        at the times our usual groups will run, if you book into a slot please make sure you only arrive
+                        for your timeslot as numbers in each slot are extremely limited.
+                    </p>
+
+                    <p class="mt-2">
+                        We will be running groups so that you come in, pick up any items from our Shop, pay, weigh, and
+                        then you must leave the building, there will be no IMAGE therapy taking place in the physical
+                        group.
+                    </p>
+
+                    <p class="mt-2">
+                        We will be instead running our normal IMAGE therapy will take place from the comfort of your
+                        home via Zoom after the weigh sessions have ended and I have got back to my house!
+
+                        <strong>Tuesday Morning</strong> - 11am
+                        <strong>Tuesday Evening</strong> - 7:30pm
+                        <strong>Thursday Evening</strong> - 8pm
+                    </p>
+
+                    <p class="mt-2">
+                        For those unable to get to the venue to weigh you will still be able to weigh virtually.
+                    </p>
+                </div>
+            </div>
+
+            <!--<accordion>
                 <template v-slot:title>
                     Click here to read the safety measures we have in place at our groups.
                 </template>
@@ -82,7 +116,7 @@
                         All surfaces, and pay and weight equipment will be cleaned between sessions.
                     </li>
                 </ul>
-            </accordion>
+            </accordion>-->
 
             @if($group->latestAnnouncement())
                 <div class="bg-sw-green rounded p-3 font-semibold mt-2 text-white text-center">
