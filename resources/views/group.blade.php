@@ -14,41 +14,7 @@
                 <a href="/" class="text-sw-red font-semibold hover:underline">Back to groups...</a>
             </div>
 
-            <div class="border border-sw-blue">
-                <div class="p-2 bg-sw-blue text-white text-semibold">
-                    Tier 3 Restrictions - Please Read!
-                </div>
-
-                <div class="p-2">
-                    <p>
-                        Due to Cheshire going into Tier 3 we can only run our groups as 'venue virtual' - this means we
-                        will have our venues open for you to weigh only. We have several 15 minute timeslots available
-                        at the times our usual groups will run, if you book into a slot please make sure you only arrive
-                        for your booked slot as numbers in each slot are extremely limited.
-                    </p>
-
-                    <p class="mt-2">
-                        We will be running groups so that you come in, pick up any items from our shop, pay, weigh, and
-                        then you must leave the building, there will be no IMAGE therapy taking place in the physical
-                        group.
-                    </p>
-
-                    <p class="mt-2">
-                        We will be instead running our normal IMAGE therapy sessions from the comfort of your
-                        home via Zoom after the weigh sessions have ended and I have got back to my house!
-
-                        <strong>Tuesday Morning</strong> - 11am
-                        <strong>Tuesday Evening</strong> - 7:30pm
-                        <strong>Thursday Evening</strong> - 8pm
-                    </p>
-
-                    <p class="mt-2">
-                        For those unable to get to the venue to weigh you will still be able to weigh virtually.
-                    </p>
-                </div>
-            </div>
-
-            <!--<accordion>
+            <accordion>
                 <template v-slot:title>
                     Click here to read the safety measures we have in place at our groups.
                 </template>
@@ -71,10 +37,11 @@
                         There will be a one-way system in the venue and queueing outside the seating area.
                     </li>
                     <li>
-                        We will be operating a separate entry/exit door where possible.
+                        We will be operating a separate entry/exit door, entry will be via the rear door and the exit
+                        via the middle door straight onto the car park.
                     </li>
                     <li>
-                        Sneeze screens will in place around the pay station, weigh station and shop to protected the
+                        Sneeze screens will in place around the pay station and weigh station and to protected the
                         consultant and social team.
                     </li>
                     <li>
@@ -97,17 +64,14 @@
                     <li>
                         If you place your belongings on a seat before weighing you must sit in that seat.
                     <li>
-                        Toilets are emergency only, so please go before attending group.
+                        Toilets are strictly emergency only, so please go before attending group.
                     </li>
                     <li>
-                        Any items that you handle from the shop, but do not purchase will be placed in a box for
+                        Any items that you handle from the shop, but do not purchase must be placed in a box for
                         decontamination.
                     </li>
                     <li>
                         There are no refreshments available, so please bring your own drinks if required.
-                    </li>
-                    <li>
-                        Please wipe your seat before leaving the group, wipes will be provided.
                     </li>
                     <li>
                         There is no raffle or slimmer of the week basket at present.
@@ -116,7 +80,7 @@
                         All surfaces, and pay and weight equipment will be cleaned between sessions.
                     </li>
                 </ul>
-            </accordion>-->
+            </accordion>
 
             @if($group->latestAnnouncement())
                 <div class="bg-sw-green rounded p-3 font-semibold mt-2 text-white text-center">
