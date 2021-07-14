@@ -1,6 +1,6 @@
 <template>
-    <div class="border border-sw-blue">
-        <div @click="show = !show" class="cursor-pointer p-2 bg-sw-blue text-white text-semibold">
+    <div class="border border-sw-green">
+        <div @click="show = !show" class="cursor-pointer p-2 bg-sw-green text-white text-semibold text-lg">
             <slot name="title"></slot>
         </div>
 
