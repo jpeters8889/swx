@@ -50,7 +50,11 @@
                     </li>
                 </ul>
 
-                <ul>
+                <p class="my-2 font-semibold">
+                    Some things are changing though, and more changes will be introduced over the coming weeks!
+                </p>
+
+                <ul class="list-disc ml-4">
                     <li>
                         We are removing the sneeze screens, social distance dots and one way system around the pay and
                         weigh stations.
